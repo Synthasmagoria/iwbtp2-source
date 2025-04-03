@@ -1,0 +1,26 @@
+// 2024-04-29 16:02:07
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2White32;
+uses_physics = false;
+
+#event create
+instance_set_width(id, view_wview[0]);
+instance_set_height(id, view_hview[0]);
+
+time = 0;
+sh = shP2Static;
+strength = 0.08;
+image_blend = make_color_rgb(200, 0, 0);
+
+#event step
+time += (1/50);
+x = view_xview[0];
+y = view_yview[0];
+
+#event draw
+shader_set(sh);
+shader_set_uniform_f(shader_get_uniform(sh, "time"), time);
+shader_set_uniform_f(shader_get_uniform(sh, "strength"), strength);
+draw_self();
+shader_reset();

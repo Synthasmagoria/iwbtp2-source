@@ -1,0 +1,23 @@
+// 2024-05-11 14:30:05
+/// array_resize->array
+#args arr, size, def
+if (live_call(argument0, argument1, argument2)) return live_result;
+var
+_len = array_length_1d(arr),
+_arr;
+
+if (_len < size) {
+    _arr = arr;
+    _arr[size - 1] = 0;
+    for (var i = _len; i < size; i++) {
+        _arr[i] = def;
+    }
+} else if (_len > size) {
+    _arr = array_create(size);
+    array_copy(_arr, 0, arr, 0, size);
+} else {
+    _arr = arr;
+}
+
+return _arr;
+

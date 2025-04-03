@@ -1,0 +1,22 @@
+// 2024-06-17 13:11:37
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+if (live_call()) return live_result;
+world = instance_find(oP2World, 0);
+tiles = world.forest_tiles;
+instances = world.forest_instances;
+
+var t;
+for (var i = ds_list_size(tiles) - 1; i >= 0; i--) {
+    t = tiles[|i];
+    tile_add(t[?"bg"], t[?"left"], t[?"top"], 32, 32, t[?"x"], t[?"y"], 1000000);
+}
+
+var inst;
+for (var i = ds_list_size(instances) - 1; i >= 0; i--) {
+    inst = instances[|i];
+    instance_create(inst[?"x"], inst[?"y"], inst[?"obj"]);
+}

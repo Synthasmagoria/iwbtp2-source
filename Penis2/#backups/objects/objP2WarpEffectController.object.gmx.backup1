@@ -1,0 +1,76 @@
+// 2024-06-28 12:56:57
+#event properties (no comments/etc. here are saved)
+parent_index = objP2Timeline;
+uses_physics = false;
+
+#event create
+
+// TODO: Fade out music
+event_inherited();
+
+global.gameStarted = false;
+
+ds_list_add(points, 1.0);
+ds_list_add(points, 2.0);
+ds_list_add(points, 4.0);
+
+player = noone;
+warp_beam = noone;
+item_use_effect = noone;
+
+with (objPlayer) {
+    other.player = instance_create(x, y, objP2Empty);
+    other.player.image_index = image_index;
+    other.player.image_xscale = xScale;
+    instance_destroy();
+}
+
+if (!player) {
+    instance_destroy();
+} else {
+    player.sprite_index = sprPlayerIdle;
+    player.image_speed = 0.25;
+    player.depth = -1000000;
+    
+    item_use_effect = instance_create(player.x, player.y, objP2WarpItemUseEffect);
+    item_use_effect.depth = player.depth - 1;
+    audio_play_sound(sndP2WarpOrbUse, 0, false);
+}
+
+#event destroy
+
+event_inherited();
+global.gameStarted = true;
+
+if (instance_exists(player))
+    instance_destroy(player);
+if (instance_exists(warp_beam))
+    instance_destroy(warp_beam);
+if (instance_exists(item_use_effect))
+    instance_destroy(item_use_effect);
+
+#event other_room_end
+instance_destroy();
+
+#event other_user0
+
+warp_beam = instance_create(player.x, player.bbox_bottom, objP2WarpBeam);
+warp_beam.depth = player.depth + 1;
+warp_beam.image_xscale = 3;
+warp_beam.image_yscale = 40;
+TweenFire(warp_beam, EaseLinear, 0, true, 0.0, 0.2, "image_index", warp_beam.image_index, warp_beam.image_number - 1);
+audio_play_sound(sndP2WarpOrbEscape, 0, false);
+player.vspeed = -12;
+
+#event other_user1
+TweenFire(warp_beam, EaseLinear, 0, true, 0.0, 0.2, "image_index", warp_beam.image_index, 0);
+
+#event other_user2
+
+instance_destroy(objPlayer);
+room_goto(rP2Intro01);
+instance_create(768, 416, objPlayer);
+global.gameStarted = true;
+instance_destroy();
+
+#event other_user3

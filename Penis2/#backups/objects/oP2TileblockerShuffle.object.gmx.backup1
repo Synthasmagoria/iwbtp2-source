@@ -1,0 +1,143 @@
+// 2023-12-16 12:14:26
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+enum P2_TILE_TYPE {
+    NOTHING,
+    FILLING,
+    BLOCK,
+    VERTICAL,
+    HORIZONTAL
+}
+
+enum P2_DIRECTION {
+    RIGHT,
+    UP, 
+    LEFT,
+    DOWN
+}
+
+enum P2_WALLS {NONE, R, U, RU, L, RL, UL, RUL, D, RD, UD, RUD, LD, RLD, ULD, RULD}
+
+target_depth = 1000000;
+tile_size = 32;
+tile_shift_max = 3;
+
+tileset_width = 4;
+block_thickness = 2;
+in_tile_area = false;
+tile_layer_alpha = 1.0;
+
+// TODO: Pooling tilemap data structures
+tilemap_width = floor(room_width / tile_size);
+tilemap_height = floor(room_height / tile_size);
+for (var xx = tilemap_width - 1; xx >= 0; xx--)
+    for (var yy = tilemap_height - 1; yy >= 0; yy--)
+        tilemap[xx, yy] = -1;
+tile_list = ds_list_create();
+
+pipes_tileset = tP2Pipes;
+pipes_depth = 1100000;
+
+/*
+{ Pooling required for the sake of performance probably
+    "tile_id" : <real>,
+    "background_tile_id" : <real>,
+    "blocks" : [<instance_id>, ...]
+}
+*/
+
+#event destroy
+ds_list_destroy(tile_list);
+
+#event step
+tile_layer_alpha = clamp(tile_layer_alpha + sign(in_tile_area - 0.5) * 0.02 * -1, 0.0, 1.0);
+in_tile_area = false;
+
+var _tile_data;
+for (var i = 0, n = ds_list_size(tile_list); i < n; i++) {
+    _tile_data = tile_list[|i];
+    tile_set_alpha(_tile_data[?"tile"], tile_layer_alpha);
+}
+
+#event other_room_start|rng tiles/spikes, block spawn etc
+event_user(0);
+
+#event other_room_end
+instance_destroy();
+
+#event other_user0
+random_set_seed(203956798 + room);
+
+var _tiles = tile_get_ids_at_depth(target_depth);
+
+if (array_length_1d(_tiles) > 1 && _tiles[0] != 0) 
+{
+    if (!global.secretItem[0])
+    {
+        var _t, _tx, _ty;
+        for (var i = 0, n = array_length_1d(_tiles); i < n; i++)
+        {
+            _t = _tiles[i];
+            _tx = tile_get_x(_t);
+            _ty = tile_get_y(_t);
+            
+            tile_set_region(
+                _t,
+                tile_get_left(_t) + irandom(tile_shift_max) * tile_size,
+                tile_get_top(_t),
+                tile_size,
+                tile_size);
+            
+            _tile_data = ds_map_create();
+            _tile_data[?"tile"] = _t;
+            _tile_data[?"pipe_tile"] = -1;
+            ds_map_add_list(_tile_data, "blocks", ds_list_create());
+            tilemap[_tx / tile_size, _ty / tile_size] = _tile_data;
+            ds_list_add(tile_list, _tile_data);
+            ds_list_mark_as_map(tile_list, ds_list_size(tile_list) - 1);
+            ds_list_add(_tile_data[?"blocks"], instance_create(_tx, _ty, objBlock));
+        }
+    }
+    else
+    {
+        var _wall_bits, _t, _tx, _ty, _tile_type, _tile_data;
+        for (var i = 0, n = array_length_1d(_tiles); i < n; i++)
+        {
+            _t = _tiles[i];
+            _tx = tile_get_x(_t);
+            _ty = tile_get_y(_t);
+            _tile_type = floor(tile_get_top(_t) / tile_size);
+            
+            _wall_bits = scrP2TileGetWallBits(_t);
+            
+            tile_set_region(
+                _t,
+                tile_get_left(_t) + irandom(tile_shift_max) * tile_size,
+                tile_get_top(_t),
+                tile_size,
+                tile_size);
+            
+            _tile_data = ds_map_create();
+            _tile_data[?"tile"] = _tiles[i];
+            _tile_data[?"pipe_tile"] = tile_add(pipes_tileset, tile_size * _wall_bits, 0, tile_size, tile_size, _tx, _ty, pipes_depth);
+            ds_map_add_list(_tile_data, "blocks", ds_list_create());
+            tilemap[_tx / tile_size, _ty / tile_size] = _tile_data;
+            ds_list_add(tile_list, _tile_data);
+            ds_list_mark_as_map(tile_list, ds_list_size(tile_list) - 1);
+            
+            scrP2WallCreateBlocks(_wall_bits, _tiles[i], block_thickness, _tile_data[?"blocks"]);
+            
+            instance_create(_tx, _ty, oP2TileArea);
+        }
+    }
+}
+
+shuffle_objects = array(oP2SpikeUp, oP2SpikeDown, oP2SpikeRight, oP2SpikeLeft);
+for (var i = 0, n = array_length_1d(shuffle_objects); i < n; i++)
+    with (shuffle_objects[i])
+        image_index = irandom(image_number - 1);
+
+randomize();

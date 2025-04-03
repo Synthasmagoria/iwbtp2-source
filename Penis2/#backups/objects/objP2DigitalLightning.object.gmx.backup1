@@ -1,0 +1,80 @@
+// 2024-06-01 13:53:48
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+persistent = true;
+uses_physics = false;
+
+#event create
+progress = 0;
+glow = -1;
+glow_alpha = 0;
+lightning_speed = 0.22;
+depth = 2999999;
+value = 100;
+image_blend = make_color_rgb(value, value, value);
+
+switch (irandom(2)) {
+    case 0: sprite_index = sprP2DigitalLightning_0; glow = sprP2DigitalLightning_0Glow; break;
+    case 1: sprite_index = sprP2DigitalLightning_1; glow = sprP2DigitalLightning_1Glow; break;
+    case 2: sprite_index = sprP2DigitalLightning_2; glow = sprP2DigitalLightning_2Glow; break;
+}
+
+TweenAddCallbackUser(
+    TweenFire(id, EaseLinear, 0, true, 0, lightning_speed, "progress", 0, 1),
+    TWEEN_EV_FINISH,
+    id,
+    0);
+TweenFire(id, EaseLinear, 0, true, lightning_speed, 0.5, "image_alpha", 1, 0);
+var _t = TweenMore(
+    TweenFire(id, EaseLinear, 0, true, lightning_speed, 0.1, "glow_alpha", 0, 1),
+    id, EaseOutQuad, 0, true, 0.0, 0.8, "glow_alpha", 1, 0);
+TweenAddCallbackUser(_t, TWEEN_EV_FINISH, id, 1);
+
+image_xscale = 2 * choose(1, -1);
+image_yscale = 2;
+
+#event other_room_start
+
+if (!srcP2WorldRoomIsOOB(room)) {
+    instance_destroy();
+}
+
+#event other_user0
+with (objP2DigitalLightningSurface) {
+    surface_set_target(surf_a);
+    draw_sprite_ext(
+        other.sprite_index,
+        other.image_index,
+        other.x * scale,
+        other.y * scale,
+        other.image_xscale * scale,
+        other.image_yscale * scale,
+        other.image_angle,
+        other.image_blend,
+        other.image_alpha);
+    surface_reset_target();
+    print(string((other.x) * scale) + ", " + string((other.y) * scale));
+}
+
+#event other_user1
+
+instance_destroy();
+
+#event draw
+
+draw_sprite_part_ext(
+    sprite_index,
+    image_index,
+    0,
+    0,
+    sprite_width,
+    sprite_height * progress,
+    x + view_xview[0],
+    y + view_yview[0],
+    image_xscale,
+    image_yscale,
+    image_blend,
+    image_alpha);
+draw_set_blend_mode(bm_add);
+draw_sprite_ext(glow, 0, x + view_xview[0], y + view_yview[0], image_xscale, image_yscale, 0, image_blend, glow_alpha);
+draw_set_blend_mode(bm_normal);

@@ -1,0 +1,10 @@
+// 2024-04-29 19:30:59
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+sprite_index = sprP2Between_MiniBlock;
+
+#event create
+image_speed = 0.33;
+depth = 750000;
+image_blend = make_color_rgb(160, 160, 160);

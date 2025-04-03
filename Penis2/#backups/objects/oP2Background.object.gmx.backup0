@@ -1,0 +1,51 @@
+// 2024-06-02 10:49:39
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sP2BG;
+uses_physics = false;
+
+#event create|init
+
+sh = shP2Dither;
+time = 0;
+time_inc = 1 / room_speed;
+
+image_alpha = 0.7;
+level = 0;
+_start_level = 0;
+
+monochrome = 0;
+severity = array(150, 175, 200, 200, 400, 600, 600, 600, 900, 1200, 1500, 1500, 1500, 1500, 1500, 1500);
+limiter  = array(9, 9, 8, 7, 5, 4, 3, 3, 2, 1.4, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2);
+time_inc = array(8, 8, 8, 6, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3);
+uvs = -1;
+
+texture_set_repeat(true);
+
+#event step_end|time + view memes
+time += time_inc[level] * (1 / room_speed);
+level = _start_level + floor(view_xview / view_wview) + floor(view_yview / view_hview);
+x = view_xview[0];
+y = view_yview[0];
+
+#event other_room_start
+_start_level = level;
+
+#event other_user0 init
+uvs = sprite_get_uvs(sprite_index, image_index);
+
+#event draw
+texture_set_repeat(true);
+
+var _l = min(array_length_1d(severity), level);
+
+shader_set(sh);
+shader_set_uniform_f(shader_get_uniform(sh, "time"), time);
+shader_set_uniform_f(shader_get_uniform(sh, "severity"), severity[_l]);
+shader_set_uniform_f(shader_get_uniform(sh, "limiter"), limiter[_l]);
+shader_set_uniform_f(shader_get_uniform(sh, "monochrome"), monochrome);
+shader_set_uniform_f(shader_get_uniform(sh, "resolution"), sprite_get_width(sprite_index), sprite_get_height(sprite_index));
+shader_set_uniform_f(shader_get_uniform(sh, "uv_tl"), uvs[0], uvs[1]);
+shader_set_uniform_f(shader_get_uniform(sh, "uv_br"), uvs[2], uvs[3]);
+draw_self();
+shader_reset();

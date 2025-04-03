@@ -1,0 +1,105 @@
+// 2024-07-03 13:18:57
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+collision_block = noone;
+
+gimmickdust_sys = part_system_create();
+part_system_depth(gimmickdust_sys, -100);
+gimmickdust_part = part_type_create();
+//part_type_shape(gimmickdust_part, pt_shape_disk);
+part_type_sprite(gimmickdust_part, sprP2PushOutBlockParticle, false, false, true);
+part_type_color1(gimmickdust_part, 16777215);
+part_type_alpha2(gimmickdust_part, 1, 0);
+part_type_life(gimmickdust_part, 40, 80);
+part_type_size(gimmickdust_part, 0.75, 1, 0, 0);
+part_type_speed(gimmickdust_part, 0.18, 0.21, 0.001, 0);
+part_type_direction(gimmickdust_part, 80, 100, 0, 0);
+part_type_orientation(gimmickdust_part, 0, 360, 0, 0, false);
+part_type_gravity(gimmickdust_part, 0, 270);
+part_type_blend(gimmickdust_part, true);
+gimmick_snd = noone;
+
+#event destroy
+part_system_destroy(gimmickdust_sys);
+part_type_destroy(gimmickdust_part);
+
+#event step_end
+if (instance_exists(collision_block)) {
+    var
+    _adjacent_blocks = ds_list_create(),
+    _player = instance_find(objPlayer, 0),
+    _player_xprev = _player.x;
+    
+    if (_player != noone) {
+        while (instance_exists(collision_block)) {
+            with (collision_block) {
+                var _xprev = _player.x;
+                _player.djump = 1; //refresh jump
+                if _player.xScale == 1 {
+                    _player.x = bbox_left - instance_center_to_bbox_right(_player) - 1;
+                    _adjacent_blocks = Collision_rectangle_list(
+                        bbox_left - 2,
+                        bbox_top - 12,
+                        bbox_left - 1,
+                        bbox_bottom + 12,
+                        oP2PushOutBlock1,
+                        false,
+                        true);
+                } else {
+                    _player.x = bbox_right - instance_center_to_bbox_left(_player) + 1;
+                    _adjacent_blocks = Collision_rectangle_list(
+                        bbox_right + 1,
+                        bbox_top - 12, 
+                        bbox_right + 2,
+                        bbox_bottom + 12,
+                        oP2PushOutBlock1,
+                        false,
+                        true);
+                }
+                
+                var _collision_block = noone;
+                
+                // Check to see if we got any adjacent blocks
+                if (_adjacent_blocks != noone)
+                {
+                    for (var i = ds_list_size(_adjacent_blocks) - 1; i >= 0; i--) {
+                        with (_adjacent_blocks[|i]) {
+                            if (blocked && place_meeting(x, y, objPlayer)) {
+                                _collision_block = id;
+                            }
+                        }
+                        if (_collision_block != noone) {
+                            break;
+                        }
+                    }
+                }
+                other.collision_block = _collision_block;
+            }
+        }
+
+        var
+        _dist = abs(_player.x - _player_xprev),
+        _dir = sign(_player.x - _player_xprev),
+        _x = 16;
+        
+        while (_x < _dist) {
+            part_particles_create(gimmickdust_sys, _player_xprev + _x * _dir, _player.y, gimmickdust_part, 1);
+            _x += 16;
+        }
+            
+        if (!audio_is_playing(gimmick_snd)) {
+            gimmick_snd = audio_play_sound(sndP2PushBlock, 0, false);
+        }
+    }
+    
+    if (ds_exists(_adjacent_blocks, ds_type_list))
+        ds_list_destroy(_adjacent_blocks);
+}
+
+collision_block = noone;
+
+#event other_room_end
+instance_destroy();

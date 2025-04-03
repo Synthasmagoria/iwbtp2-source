@@ -1,0 +1,7 @@
+// 2024-01-27 13:34:39
+/// buffer_read_string(buffer, bytes)
+#args buffer, bytes
+var _prev_pos = buffer_tell(buffer);
+var _str = buffer_read(buffer, buffer_text);
+buffer_seek(buffer, buffer_seek_relative, _prev_pos - buffer_tell(buffer) + bytes);
+return _str;

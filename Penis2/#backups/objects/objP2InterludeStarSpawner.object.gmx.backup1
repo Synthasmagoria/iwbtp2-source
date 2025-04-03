@@ -1,0 +1,15 @@
+// 2024-01-30 21:59:33
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+star_spawn_rate = 0.1;
+star_spawn_timer = 0;
+
+#event step
+star_spawn_timer += 1/50;
+if (star_spawn_rate <= star_spawn_timer) {
+    instance_create(irandom(800), irandom(400), objP2InterludeStar);
+    star_spawn_timer -= star_spawn_rate;
+}

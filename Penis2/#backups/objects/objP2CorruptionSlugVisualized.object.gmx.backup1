@@ -1,0 +1,18 @@
+// 2024-06-30 23:02:01
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2BlankCentered;
+persistent = true;
+uses_physics = false;
+
+#event create
+wiggle_time = random(100);
+wiggle_frequency = 1.0;
+wiggle_speed = 1.0;
+wiggle_amplitude = 1.0;
+image_alpha = 0.3;
+
+#event step
+wiggle_time += 1/50 * 10.0 * wiggle_speed;
+
+#event draw don't draw

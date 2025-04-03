@@ -1,0 +1,8 @@
+// 2024-05-11 12:34:35
+/// array_create_ext
+#args size, val
+var _arr = array_create(size);
+for (var i = 0; i < size; i++) {
+    _arr[i] = val;
+}
+return _arr;

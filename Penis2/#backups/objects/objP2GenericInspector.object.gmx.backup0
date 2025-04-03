@@ -1,0 +1,168 @@
+// 2024-05-29 12:18:31
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+persistent = true;
+uses_physics = false;
+
+#event create
+if (instance_number(object_index) > 1) {
+    instance_destroy(id, false);
+    exit;
+}
+
+enum __INSPECTOR_TYPES {
+    REAL, STRING, ARRAY
+}
+
+text_margin = 4;
+box_padding = 8;
+box_width_max = 324;
+header_margin = 4;
+item_ysep = -8;
+item_highlight_index = -1;
+
+box_width = -1;
+box_height = -1;
+target = noone;
+instance_index = 0;
+instance_list = ds_list_create();
+instance_header_string = "";
+variable_values = -1;
+variable_types = -1;
+variable_names = -1;
+variable_strings = -1;
+variable_strings_rendered = -1;
+variable_number = -1;
+prev_click_x = -1;
+prev_click_y = -1;
+character_width = -1;
+character_height = -1;
+font = fP2Silver16;
+
+#event destroy
+ds_list_destroy(instance_list);
+
+#event step
+if (mouse_check_button_pressed(mb_left)) {
+    if (target && point_in_rectangle(mouse_x, mouse_y, x, y, x + box_width, y + box_height)) {
+        // input
+    } else {
+        ds_list_clear(instance_list);
+        collision_point_list(mouse_x, mouse_y, all, true, true, instance_list, false);
+        if (ds_list_size(instance_list) > 0) {
+            if (mouse_x == prev_click_x && mouse_y == prev_click_y) {
+                instance_index = (instance_index + 1) % ds_list_size(instance_list);
+            } else {
+                instance_index = 0;
+            }
+            prev_click_x = mouse_x;
+            prev_click_y = mouse_y;
+            
+            draw_set_font(font);
+            character_width = string_width("A");
+            character_height = string_height("A");
+            
+            box_width = -1;
+            box_height = -1;
+            
+            target = instance_list[|instance_index];
+            instance_header_string = object_get_name(target.object_index) + " inst_" + string(target.id);
+            
+            variable_names = variable_instance_get_names(target);
+            variable_number = array_length_1d(variable_names);
+            variable_types = array_create(variable_number);
+            variable_values = array_create(variable_number);
+            variable_strings = array_create(variable_number);
+            var _val;
+            for (var i = 0; i < variable_number; i++) {
+                _val = variable_instance_get(target, variable_names[i]);
+                variable_values[i] = _val;
+                if (is_real(_val)) {
+                    variable_strings[i] = string(_val);
+                    variable_types[i] = __INSPECTOR_TYPES.REAL;
+                } else if (is_string(_val)) {
+                    variable_strings[i] = _val;
+                    variable_types[i] = __INSPECTOR_TYPES.STRING;
+                } else if (is_array(_val)) {
+                    var _buf_str = buffer_create(512, buffer_grow, 1);
+                    buffer_write(_buf_str, buffer_text, "[");
+                    for (var i = 0, n = array_length_1d(_val); i < n; i++) {
+                        buffer_write(_buf_str, buffer_text, string(_val[i]) + ", ");
+                    }
+                    buffer_write(_buf_str, buffer_text, "]");
+                    buffer_seek(_buf_str, buffer_seek_start, 0);
+                    variable_strings[i] = buffer_read(_buf_str, buffer_text);
+                    buffer_delete(_buf_str);
+                    variable_types[i] = __INSPECTOR_TYPES.ARRAY;
+                }
+                
+                variable_strings_rendered[i] = variable_names[i] + ": " + variable_strings[i];
+                box_width = clamp(
+                    text_margin * 2 + string_length(variable_strings_rendered[i]) * character_width,
+                    box_width,
+                    box_width_max);
+            }
+            box_width = min(string_length(instance_header_string) * character_width, box_width_max);
+            box_height =
+                text_margin * 2 +
+                character_height + item_ysep + header_margin * sign(variable_number) + // header
+                variable_number * (character_height + item_ysep); // variable items
+            
+            x = target.bbox_right + box_padding - view_xview[0];
+            if (x + box_width >= view_wview[0])
+                x = target.bbox_left - box_width - box_padding - view_xview[0];
+            y = target.bbox_bottom + box_padding - view_yview[0];
+            y -= max(0, (y + box_height) - (view_hview[0] - box_padding));
+        } else {
+            target = noone;
+        }
+    }
+}
+
+if (mouse_check_button_pressed(mb_right)) {
+    target = noone;
+}
+
+var _item_list_y = y + character_height + item_ysep + header_margin * sign(variable_number);
+if (target && point_in_rectangle(mouse_x, mouse_y, x, _item_list_y, x + box_width, y + box_height)) {
+    item_highlight_index = floor((mouse_y - _item_list_y) / (character_height + item_ysep));
+} else {
+    item_highlight_index = -1;
+}
+
+#event draw_gui
+if (instance_exists(target)) {
+    draw_set_color(c_white);
+    draw_set_alpha(1.0);
+    draw_line(x, y, target.x, target.y);
+    draw_set_color(c_black);
+    draw_line(x + 1, y, target.x + 1, target.y);
+    
+    draw_set_color(c_black);
+    draw_set_alpha(0.8);
+    draw_rectangle(x, y, x + box_width, y + box_height, false);
+    draw_set_color(c_white);
+    draw_set_alpha(1.0);
+    draw_rectangle(x, y, x + box_width, y + box_height, true);
+    
+    draw_set_font(font);
+    var _dx = x + text_margin, _dy = y + text_margin, _item_ysep = (character_height + item_ysep);
+    draw_text(_dx, _dy, instance_header_string);
+    _dy += _item_ysep + header_margin;
+    
+    if (item_highlight_index != -1) {
+        draw_set_color(c_white);
+        draw_set_alpha(0.5);
+        draw_rectangle(
+            _dx,
+            _dy + _item_ysep * item_highlight_index,
+            _dx + box_width,
+            _dy + _item_ysep * (item_highlight_index + 1),
+            false);
+        draw_set_alpha(1.0);
+    }
+    
+    for (var i = 0; i < variable_number; i++) {
+        draw_text(_dx, _dy + i * _item_ysep, variable_strings_rendered[i]);
+    }
+}

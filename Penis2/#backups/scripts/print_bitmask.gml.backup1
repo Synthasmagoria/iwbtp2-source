@@ -1,0 +1,8 @@
+// 2024-06-22 11:28:31
+/// print_bitmask
+#args int
+var _bitmask_str = "";
+for (var i = 0; i < 32; i++) {
+    _bitmask_str += string(int_get_bit(int, i));
+}
+print(_bitmask_str);

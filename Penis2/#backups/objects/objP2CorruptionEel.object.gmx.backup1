@@ -1,0 +1,127 @@
+// 2024-07-17 11:56:27
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+velocity = 20;
+image_angle = 172;
+angle_incr = 0.05;
+width = 4800;
+height = 700;
+particle_frequency = 3;
+corruption_frequency = 2;
+
+essential_corruption_x = 352;
+essential_corruption_y = 1152;
+essential_corruption_done = false;
+
+world = instance_find(oP2World, 0);
+
+eel_noise = audio_play_sound(sndP2EelNoise, 0, false);
+audio_sound_gain(eel_noise, 0, 0);
+
+eel_cry = audio_play_sound(sndP2Eel, 0, false);
+
+visual_instance = instance_create(x, y, objP2CorruptionSlugVisualized);
+instance_set_width(visual_instance, width)
+instance_set_height(visual_instance, height);
+visual_instance.wiggle_frequency = 6.0;
+visual_instance.wiggle_amplitude = 0.25;
+visual_instance.wiggle_speed = 1.2;
+
+print("-------- eel time -----------");
+
+with (objP2CorruptionSlugVisualManager) {
+    sh_post = shP2SlugFractalPost;
+}
+
+with (visual_instance) {
+    path_start(pP2Eel, other.velocity, path_action_stop, true);
+}
+
+path_start(pP2Eel, velocity, path_action_stop, true);
+
+alarm[0] = irandom_range(165, 250);
+alarm[1] = irandom_range(40, 50);
+
+with (oP2Camera) {
+    TweenFire(id, EaseLinear, TWEEN_MODE_BOUNCE, true, 0.0, 4.0, "shake", 0.0, 3.9);
+}
+
+#event destroy
+if (!essential_corruption_done)
+    event_user(0);
+
+instance_destroy(visual_instance);
+
+if (audio_is_playing(eel_noise))
+    audio_stop_sound(eel_noise);
+
+with (objP2CorruptionSlugVisualManager) {
+    sh_post = shP2CorruptionSlugPost;
+}
+
+#event alarm0
+var _rift = instance_create(irandom_range(96, 224) + irandom(1) * room_width / 2, 0, objP2Rift);
+TweenFire(_rift, EaseOutCubic, 0, true, 0.0, 4.0, "image_xscale", 0.0, random_range(4.0, 6.0));
+
+#event alarm1
+if (!essential_corruption_done)
+    event_user(0);
+
+#event step
+image_angle += angle_incr;
+visual_instance.image_angle = image_angle;
+
+if (audio_is_playing(eel_noise)) {
+    var _distance_from_middle = abs(room_width / 2 - x);
+    audio_sound_gain(eel_noise, clamp(invlerp(3000, 500, _distance_from_middle), 0, 1), 0);
+}
+
+with (world) {
+    repeat(other.particle_frequency) {
+        part_particles_create(
+            eel_star_sys,
+            other.x + irandom(other.width * 0.5) - other.width * 0.25,
+            other.y + irandom(other.height * 0.5) - other.height * 0.25,
+            eel_star_part,
+            1);
+    }
+}
+
+var _tx, _ty, _td;
+repeat(corruption_frequency) {
+    _tx = floor((x + irandom(width * 0.5) - width * 0.25) / __P2_TILE_SIZE);
+    _ty = floor((y + irandom(height * 0.5) - height * 0.25) / __P2_TILE_SIZE);
+    if (scrP2TilemapPositionInRoom(_tx, _ty)) {
+        print("tilemap: " + string(_tx) + ", " + string(_ty));
+        _td = scrP2TilemapGetInRoom(_tx, _ty);
+        if (!_td || !_td[?"corruption"]) {
+            scrP2TilemapTileCorruptInRoom(_tx, _ty);
+            instance_create(_tx * 32, _ty * 32, oP2Corruption);
+        }
+    }
+}
+
+#event other_room_end
+instance_destroy();
+
+#event other_end_of_path
+instance_destroy();
+
+#event other_user0
+var
+_tx = floor(essential_corruption_x / __P2_TILE_SIZE),
+_ty = floor(essential_corruption_y / __P2_TILE_SIZE),
+_td;
+
+_td = scrP2TilemapGetInRoom(_tx, _ty);
+if (!_td || !_td[?"corruption"]) {
+    if (_tx == 0)
+        print("tilemap: " + string(_tx) + ", " + string(_ty));
+    scrP2TilemapTileCorruptInRoom(_tx, _ty);
+    instance_create(_tx * 32, _ty * 32, oP2Corruption);
+}
+
+essential_corruption_done = true;

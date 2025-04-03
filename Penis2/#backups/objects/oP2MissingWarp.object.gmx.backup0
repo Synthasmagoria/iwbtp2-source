@@ -1,0 +1,39 @@
+// 2024-06-27 18:18:38
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2MissingWarp;
+uses_physics = false;
+
+#event create
+image_speed = 1/8;
+corrupted = false;
+value = 255;
+value_final = 255 * 0.7;
+corrupt_animation_sprite = sprP2MissingWarpCorrupt;
+
+if (int_get_bit(global.p2Flag, P2_FLAG.NO_ESCAPE_WARP_TOUCHED)) {
+    sprite_index = corrupt_animation_sprite;
+    image_speed = 0;
+    image_index = sprite_get_number(corrupt_animation_sprite) - 1;
+    corrupted = true;
+    value = value_final;
+}
+
+#event step
+image_blend = make_color_rgb(value, value, value);
+
+#event collision:objPlayer
+if (!corrupted) {
+    corrupted = true;
+    sprite_index = corrupt_animation_sprite;
+    global.p2Flag = int_truth_bit(global.p2Flag, P2_FLAG.NO_ESCAPE_WARP_TOUCHED);
+    global.saveP2Flag = int_truth_bit(global.p2Flag, P2_FLAG.NO_ESCAPE_WARP_TOUCHED);
+    audio_play_sound(sndP2MissingWarp, 0, false);
+    TweenFire(id, EaseLinear, 0, true, 0.0, 1.0, "value", value, value_final);
+}
+
+#event other_animation_end
+if (corrupted) {
+    image_index = image_number - 1;
+    image_speed = 0;
+}

@@ -1,0 +1,19 @@
+// 2023-12-09 12:26:06
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+//TODO: select function
+
+text = "<not input>"
+font = fP2Arial40
+action = 0
+color = c_black
+index = 0
+
+#event draw
+draw_set_color(color)
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+draw_text(x, y, text)

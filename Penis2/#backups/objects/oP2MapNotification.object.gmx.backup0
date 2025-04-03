@@ -1,0 +1,49 @@
+// 2024-07-01 04:14:26
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+persistent = true;
+
+#event create
+if (instance_number(object_index) > 1) {
+    instance_destroy(id, false);
+    exit;
+}
+
+width = 0;
+height = 0;
+size = 0;
+duration = 2;
+delay = 1;
+sound = -1;
+
+with (oP2Map) {
+    other.x = view_wview[0] - padding - target_width;
+    other.y = padding;
+    other.width = target_width;
+    other.height = target_height;
+}
+
+image_alpha = 0.0;
+
+TweenFire(id, EaseLinear, 0, true, delay, duration, "image_alpha", 1.0, 0.0);
+var _t = TweenFire(id, EaseOutCubic, 0, true, delay, duration, "size", 0, 128);
+TweenAddCallbackUser(_t, TWEEN_EV_FINISH_DELAY, id, 0);
+TweenAddCallbackUser(_t, TWEEN_EV_FINISH, id, 1);
+
+#event other_user0
+sound = audio_play_sound(sndP2QuestGet, 0, false);
+
+#event other_user1
+instance_destroy();
+
+#event destroy
+if (audio_is_playing(sound)) {
+    audio_stop_sound(sound);
+}
+
+#event draw_gui
+draw_set_color(c_white);
+draw_set_alpha(image_alpha);
+draw_rectangle(x - size, y - size, x + width + size, y + height + size, true);
+draw_set_alpha(1.0);

@@ -1,0 +1,11 @@
+// 2023-12-17 18:47:17
+/// scrP2TiledataToString(td)
+#args td
+
+return string(td) + ": {" +
+    "tile: " + string(td[?"tile"]) +
+    ", tile_index: " + string(td[?"tile_index"]) +
+    ", tile_x: " + string(td[?"tile_x"]) +
+    ", tile_y: " + string(td[?"tile_y"]) +
+    ", pipe_tile: " + string(td[?"pipe_tile"]) +
+    ", pipe_tile_index: " + string(td[?"pipe_tile_index"]) + "}";

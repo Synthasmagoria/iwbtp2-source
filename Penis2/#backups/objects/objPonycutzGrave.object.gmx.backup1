@@ -1,0 +1,140 @@
+// 2024-06-27 15:10:11
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sP2PonycutzGravestone;
+uses_physics = false;
+
+#event create
+depth = 1000000;
+
+music_list = array(musP2Ponycutz01, musP2Ponycutz02, musP2Ponycutz03, musP2Ponycutz04);
+music_inst = noone;
+music_inst_volume = 1.0;
+music_length = -1.0;
+music_index = -1.0;
+
+transition_point = 4.0;
+transitioning = false;
+transition_length = 5.0;
+
+radio_sound = musP2RussianRadio;
+radio_sound_inst = noone;
+radio_sound_volume = 0.0;
+
+world_music_original_gain = 0.0;
+
+volume = 0.0;
+playing = false;
+radius = 32;
+drop_off_radius = 24;
+
+#event step
+var _dist = radius + drop_off_radius;
+
+with (objPlayer)
+{
+    _dist = point_distance(x, y, instance_get_middle_x(other.id), instance_get_middle_y(other.id));
+}
+
+volume = 1.0 - clamp((_dist - radius) / drop_off_radius, 0.0, 1.0);
+
+with (oP2Background)
+{
+    monochrome = other.volume;
+}
+
+if (volume == 0.0 && playing)
+{
+    event_user(1); // stop music
+    
+    if (audio_is_playing(radio_sound_inst))
+        audio_stop_sound(radio_sound_inst);
+    radio_sound_inst = noone;
+    
+    with (objPonycutzText)
+    {
+        active = false;
+        event_user(1); // set active state
+    }
+}
+else if (volume > 0.0 && !playing)
+{
+    event_user(2); // play next song
+    
+    with (objPonycutzText)
+    {
+        active = true;
+        event_user(1); // set active state
+    }
+}
+
+if (playing)
+{
+    var _remaining_music = music_length - audio_sound_get_track_position(music_inst);
+    if (!transitioning && _remaining_music <= transition_point)
+    {
+        event_user(0); // transition
+    }
+    
+    if (audio_is_playing(radio_sound_inst))
+        audio_sound_gain(radio_sound_inst, radio_sound_volume * volume, 0);
+    if (audio_is_playing(music_inst))
+        audio_sound_gain(music_inst, music_inst_volume * volume, 0);
+    audio_sound_gain(global.currentMusic, 1.0 - volume, 0);
+}
+
+#event other_room_start
+music_index = irandom(array_length_1d(music_list) - 1);
+array_randomize(music_list);
+
+world_music_original_gain = audio_sound_get_gain(global.currentMusic);
+
+#event other_room_end
+instance_destroy();
+
+#event destroy
+if (audio_is_playing(global.currentMusic)) {
+    audio_sound_gain(global.currentMusic, world_music_original_gain, 0);
+}
+
+if (audio_is_playing(music_inst)) {
+    audio_stop_sound(music_inst);
+}
+
+if (audio_is_playing(radio_sound_inst)) {
+    audio_stop_sound(radio_sound_inst);
+}
+
+#event other_user0 transition
+transitioning = true;
+radio_sound_inst = audio_play_sound(radio_sound, 0, false);
+
+var _t;
+_t = TweenFire(id, EaseLinear, TWEEN_MODE_ONCE, true, 0.0, transition_length / 2.0, "music_inst_volume", 1.0, 0.0);
+TweenAddCallbackUser(_t, TWEEN_EV_FINISH, id, 3);
+
+var _radio_gain_duration = transition_length / 2.0 - 1.0 / 2.0;
+_t = TweenFire(id, EaseLinear, TWEEN_MODE_ONCE, true, 0.0, _radio_gain_duration, "radio_sound_volume", 0.0, 1.0);
+_t = TweenMore(_t, id, EaseLinear, TWEEN_MODE_ONCE, true, 1.0, _radio_gain_duration, "radio_sound_volume", 1.0, 0.0);
+TweenAddCallbackUser(_t, TWEEN_EV_FINISH, id, 4);
+
+#event other_user1 stop music
+playing = false;
+if (audio_is_playing(music_inst))
+    audio_stop_sound(music_inst);
+music_inst = noone;
+music_length = -1.0;
+
+#event other_user2 play next song
+event_user(1);
+music_index = (music_index + 1) % array_length_1d(music_list);
+music_inst = audio_play_sound(music_list[music_index], 0, false);
+music_length = audio_sound_length(music_list[music_index]);
+playing = true;
+
+#event other_user3
+event_user(2);
+TweenFire(id, EaseLinear, TWEEN_MODE_ONCE, true, 0.0, transition_length / 2.0, "music_inst_volume", 0.0, 1.0);
+
+#event other_user4
+transitioning = false;

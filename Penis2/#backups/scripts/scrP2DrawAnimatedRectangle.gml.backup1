@@ -1,0 +1,10 @@
+// 2024-01-17 21:14:13
+/// scrP2DrawAnimatedRectangle(xx, yy, w, h, anim)
+#args xx, yy, w, h, anim
+var
+_x2 = xx + w,
+_y2 = yy + h;
+draw_line(xx, yy, xx + w * anim, yy);
+draw_line(_x2, yy, _x2, yy + h * anim);
+draw_line(_x2, _y2, xx + w - w * anim, _y2);
+draw_line(xx, yy + h, xx, yy + h - h * anim);

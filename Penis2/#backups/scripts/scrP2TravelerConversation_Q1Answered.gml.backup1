@@ -1,0 +1,6 @@
+// 2024-05-22 22:22:01
+/// scrP2TravelerConversation_Q1Answered
+global.p2Flag = int_truth_bit(global.p2Flag, P2_FLAG.TRAVELER_Q1);
+global.saveP2Flag = int_truth_bit(global.saveP2Flag, P2_FLAG.TRAVELER_Q1);
+print("this happened")
+scrP2TravelerConversation_SetBranches();

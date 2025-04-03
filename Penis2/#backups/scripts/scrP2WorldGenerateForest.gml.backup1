@@ -1,0 +1,91 @@
+// 2024-06-30 15:18:16
+/// scrP2WorldGenerateForest
+#args tree_chance, tile_chance, change_other_solids_tile_depth
+/*
+    This script will generate a forest instantly and probably lag the game because of heavy workload.
+    Use the forest generator object instead.
+*/
+
+scrP2WorldClearForestInstances();
+scrP2WorldClearForestTiles();
+
+var
+_world_x_start = (global.__p2_current_room_x + floor(view_xview[0] / view_wview[0]) - 1) * 25,
+_world_y_start = (global.__p2_current_room_y + floor(view_yview[0] / view_hview[0]) - 1) * 19,
+_world_tilemap_width = ds_grid_width(global.__p2_tilemap),
+_world_tilemap_height = ds_grid_height(global.__p2_tilemap),
+_world = instance_find(oP2World, 0),
+_tree_height_check = 6,
+_td, _ti, _ty;
+for (var xx = 0, w = 25 * 3; xx < w; xx++) {
+    for (var yy = 0, h = 19 * 3; yy < h; yy++) {
+        if (!point_in_rectangle(_world_x_start + xx, _world_y_start + yy, 0, 0, _world_tilemap_width, _world_tilemap_height)) {
+            continue;
+        }
+        
+        _td = global.__p2_tilemap[#_world_x_start + xx, _world_y_start + yy];
+        if (_td && !_td[?"corruption"]) {
+            _ty = floor(_td[?"tile_index"] / 4);
+            with (_world) {
+                if (_ty == 1) {
+                    scrP2WorldInternalCreateForestInstance(xx * 32, yy * 32, objP2LeafBlock);
+                } else {
+                    if (random(1) <= tile_chance) {
+                        scrP2WorldInternalCreateForestTile(xx * 32, yy * 32, 0, _ty * 32, tP2Forest);
+                    } else {
+                        scrP2WorldInternalCreateForestTile(xx * 32, yy * 32, 0, _ty * 32, tPenis2Tileset);
+                    }
+                    scrP2WorldInternalCreateForestInstance(xx * 32, yy * 32, objBlock);
+                }
+            }
+            
+            if (_ty != 1 && random(1) < tree_chance) {
+                var _tree = _world.forest_trees[|irandom(ds_list_size(_world.forest_trees) - 1)];
+                if (scrP2TreeFits(_world_x_start + xx, _world_y_start + yy, -1, 6, global.__p2_tilemap)) {
+                    scrP2WorldCreateForestTree(
+                        xx * 32,
+                        yy * 32,
+                        _tree[?"structure"],
+                        _tree[?"xorigin"],
+                        _tree[?"yorigin"],
+                        random(1) < 0.5,
+                        false);
+                } else if (scrP2TreeFits(_world_x_start + xx, _world_y_start + yy, 1, 6, global.__p2_tilemap)) {
+                    scrP2WorldCreateForestTree(
+                        xx * 32,
+                        yy * 32,
+                        _tree[?"structure"],
+                        _tree[?"xorigin"],
+                        _tree[?"yorigin"],
+                        random(1) < 0.5,
+                        true);
+                }
+            }
+        }
+    }
+}
+
+var
+_other_solid_tiles = tile_get_ids_at_depth(change_other_solids_tile_depth),
+_other_x, _other_y, _t;
+with (_world) {
+    for (var i = array_length_1d(_other_solid_tiles) - 1; i >= 0; i--) {
+        _t = _other_solid_tiles[i];
+        if (tile_exists(_t)) {
+            _other_x = tile_get_x(_t) - view_xview[0] + view_wview[0];
+            _other_y = tile_get_y(_t) - view_yview[0] + view_hview[0];
+            scrP2WorldInternalCreateForestTile(_other_x, _other_y, tile_get_left(_t), tile_get_top(_t), tile_get_background(_t));
+            scrP2WorldInternalCreateForestInstance(_other_x, _other_y, objBlock);
+        }
+    }
+}
+
+var _monolith = instance_find(objP2Monolith, 0);
+if (_monolith) {
+    with (_world) {
+        scrP2WorldInternalCreateForestInstance(
+            _monolith.x - view_xview[0] + view_wview[0],
+            _monolith.y - view_yview[0] + view_hview[0],
+            objP2Monolith);
+    }
+}

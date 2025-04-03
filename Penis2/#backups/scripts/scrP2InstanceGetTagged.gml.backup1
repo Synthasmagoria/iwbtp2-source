@@ -1,0 +1,10 @@
+// 2024-05-20 10:52:23
+/// scrP2InstanceGetTagged
+#args obj, tag
+var _inst = ds_list_create();
+with (obj) {
+    if (variable_instance_get(id, "__p2_tag") == tag) {
+        ds_list_add(_inst, id);
+    }
+}
+return _inst;

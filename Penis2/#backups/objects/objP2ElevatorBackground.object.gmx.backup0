@@ -1,0 +1,14 @@
+// 2024-05-01 23:10:55
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2ElevatorPanelBg;
+uses_physics = false;
+
+#event create
+depth = 1;
+
+#event draw
+/// override
+
+#event draw_gui
+draw_self();

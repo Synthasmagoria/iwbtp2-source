@@ -1,0 +1,158 @@
+// 2024-05-20 08:14:43
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sP2PMDTextboxPurple;
+uses_physics = false;
+
+#event create
+if (live_call()) return live_result;
+text = "NOT SET";
+text_margin_x = 24;
+text_margin_y = 14;
+text_speed = 1;
+text_lines = 3;
+padding_y = 8;
+text_width = 324;
+element_margin = 8;
+manual = true;
+font = fP212; // NOTE: monospace required
+callback_scripts = ds_list_create();
+callback_script_lines = ds_list_create();
+sound = sndP2Dialogue;
+
+sound_inst = -1;
+text_index = 0;
+text_char_index = 0;
+text_cut = ds_list_create();
+portrait_sprite = -1;
+portrait_emotions = -1;
+portrait_inst = noone;
+options_inst = noone;
+t = 0;
+t_incr = (1 / room_speed) * 0.03;
+
+#event destroy
+if (live_call()) return live_result;
+with (oP2Hud) {
+    hud_scale_disabled = false;
+}
+
+for (var i = 0, n = ds_list_size(callback_script_lines); i < n; i++) {
+    if (callback_script_lines[|i] == 9999) {
+        script_execute(callback_scripts[|i], id);
+    }
+}
+
+if (instance_exists(portrait_inst)) {
+    instance_destroy(portrait_inst);
+}
+
+if (instance_exists(options_inst)) {
+    instance_destroy(options_inst);
+}
+
+ds_list_destroy(text_cut);
+ds_list_destroy(callback_scripts);
+ds_list_destroy(callback_script_lines);
+
+#event step
+if (live_call()) return live_result;
+t += t_incr;
+
+var _text_char_index_prev = text_char_index;
+text_char_index = min(text_char_index + text_speed[text_index], string_length(text_cut[|text_index]));
+
+if (_text_char_index_prev < floor(text_char_index) && !audio_is_playing(sound_inst)) {
+    sound_inst = audio_play_sound(sound, 0, false);
+    audio_sound_pitch(sound_inst, random_range(0.95, 1.05));
+}
+
+if (_text_char_index_prev < text_char_index && text_char_index == string_length(text_cut[|text_index])) {
+    event_user(1);
+}
+
+if (manual && scrButtonCheckPressed(global.jumpButton)) {
+    scrP2TextboxAdvance(id);
+}
+
+#event other_room_end
+instance_destroy();
+
+#event other_user0|init or update
+if (live_call()) return live_result;
+if (!is_array(text)) {
+    text = array(text);
+}
+
+text_index = 0;
+text_char_index = 0;
+
+draw_set_font(font);
+ds_list_clear(text_cut);
+scrP2StringFormatMono(text, string_width("A"), text_width, text_lines, text_cut);
+
+var cw = view_wview, ch = view_hview;
+x = cw / 2 - sprite_width / 2;
+
+var
+_player = instance_find(objPlayer, 0),
+_bottom = (_player && _player.y < ch / 2);
+if (_bottom) {
+    y = ch - padding_y - sprite_height;
+} else {
+    y = padding_y;
+    if (scrP2HudGetScale() == P2_HUD_SCALE.MAXIMIZED) {
+        scrP2HudSetScale(P2_HUD_SCALE.NORMAL);
+    }
+}
+
+with (oP2Hud) {
+    hud_scale_disabled = true;
+}
+
+if (!is_array(portrait_emotions)) {
+    portrait_emotions = array_create_ext(ds_list_size(text_cut), portrait_emotions);
+} else {
+    portrait_emotions = array_resize(portrait_emotions, ds_list_size(text_cut), P2_EMOTIONS.NEUTRAL);
+}
+
+if (!is_array(text_speed)) {
+    if (text_speed > 0) {
+        text_speed = array_create_ext(ds_list_size(text_cut), text_speed);
+    } else {
+        text_speed = array_create_ext(ds_list_size(text_cut), 1);
+    }
+} else {
+    text_speed = array_resize(text_speed, ds_list_size(text_cut), 1);
+}
+
+if (portrait_sprite != -1) {
+    if (!instance_exists(portrait_inst)) {
+        portrait_inst = scrP2TextboxCreatePortrait(id, portrait_sprite, portrait_emotions);
+    } else {
+        portrait_inst.portrait = portrait_sprite;
+    }
+    portrait_inst.visible = true;
+    portrait_inst.emotion = portrait_emotions[0];
+} else if (instance_exists(portrait_inst)) {
+    instance_destroy(portrait_inst);
+}
+
+#event other_user1|call current line scripts
+if (live_call()) return live_result;
+for (var i = 0, n = ds_list_size(callback_script_lines); i < n; i++) {
+    if (callback_script_lines[|i] == text_index) {
+        script_execute(callback_scripts[|i], id);
+    }
+}
+
+#event draw|do nothing
+
+
+#event draw_gui
+if (live_call()) return live_result;
+draw_self();
+draw_set_font(font);
+draw_set_colour(c_white);
+draw_set_halign(fa_left);
+draw_text_outline(x + text_margin_x, y + text_margin_y, string_copy(text_cut[|text_index], 0, text_char_index), $467F5F, sin(t) * 2);

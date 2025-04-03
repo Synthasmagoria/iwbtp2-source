@@ -1,0 +1,10 @@
+// 2024-06-01 16:07:22
+#event properties (no comments/etc. here are saved)
+parent_index = oP2Collectable;
+sprite_index = sprP2WarpOrb;
+uses_physics = false;
+
+#event create
+event_inherited();
+text = "Warp orb collected. Press '2' to warp home.";
+index = P2_ITEM.WARP_ORB;

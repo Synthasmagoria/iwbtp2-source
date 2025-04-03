@@ -1,0 +1,80 @@
+// 2023-12-18 19:49:33
+#event properties (no comments/etc. here are saved)
+parent_index = objP2CorruptionSlug;
+uses_physics = false;
+
+#event create
+/*
+    NOTE: The position handling might be thrown off when working
+    with non-full-block room sizes
+*/
+
+event_inherited();
+
+#event step
+event_user(1);
+
+corruption_timer += (1/50);
+if (corruption_timer >= corruption_interval)
+{
+    corruption_timer -= corruption_interval;
+    
+    var
+    _tmx = x,
+    _tmy = y,
+    _mi = movement_index;
+    
+    for (var i = 0; i < corruption_length; i++)
+    {
+        
+        var _td = scrP2GetTiledataAt(floor(_tmx / tile_size), floor(_tmy / tile_size));
+        
+        if (_td != -1) {
+            _td[?"tile_index"] = ((_td[?"tile_index"] - tile_index_min + tile_index_shift) % (tile_index_max - tile_index_min)) + tile_index_min;
+            _td[?"pipe_tile_index"] = scrP2GetWallBitsAt(_tmx / tile_size, _tmy / tile_size);
+            
+            // TODO: Make sure that newly created tiles' ids never overlap with old ones
+            if (tile_exists(_td[?"tile"])) {
+                tile_set_region(
+                    _td[?"tile"],
+                    (_td[?"tile_index"] % tileset_width) * tile_size,
+                    floor(_td[?"tile_index"] / tileset_width) * tile_size,
+                    tile_size,
+                    tile_size);
+                
+                tile_set_region(_td[?"pipe_tile"], _td[?"pipe_tile_index"] * tile_size, 0, tile_size, tile_size);
+                
+                if (global.P2WrenchItem) {
+                    var _blocks = _td[?"block_list"];
+                    for (var i = 0, n = ds_list_size(_blocks); i < n; i++)
+                        instance_destroy(_blocks[|i]);
+                    ds_list_clear(_blocks);
+                    
+                    scrP2WallCreateBlocks(_td[?"pipe_tile_index"], _td[?"tile"], 2, _td[?"block_list"]);
+                }
+            }
+        }
+        
+        if (i == corruption_length - 1)
+        {
+            tail_x = _tmx;
+            tail_y = _tmy;
+        }
+        
+        _mi--;
+        if (_mi < 0)
+            _mi += movement_pattern_length;
+        
+        _tmx -= movement_pattern_x[_mi] * tile_size;
+        _tmy -= movement_pattern_y[_mi] * tile_size;
+        
+        _tmx -= floor(_tmx / room_width) * room_width * roomwrap;
+        _tmy -= floor(_tmy / room_height) * room_height * roomwrap;
+    }
+}
+
+#event other_user0|init
+tileset_width = floor(background_get_width(tileset) / tile_size);
+movement_pattern_length = array_length_1d(movement_pattern_x);
+x = floor(x / tile_size) * tile_size;
+y = floor(y / tile_size) * tile_size;

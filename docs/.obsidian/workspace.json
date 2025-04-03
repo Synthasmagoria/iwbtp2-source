@@ -1,0 +1,197 @@
+{
+  "main": {
+    "id": "c42594b71c1d9e72",
+    "type": "split",
+    "children": [
+      {
+        "id": "2771a8e34586c9fb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5f1f3b1ec22027fd",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Codebase Video Notes.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Codebase Video Notes"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "69d1cbefa1d71452",
+    "type": "split",
+    "children": [
+      {
+        "id": "c36e089df1516b7d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "625e341919450f43",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "72ca94934d9892a6",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "4a99972a99f6041c",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "bc5195d959bb1f96",
+    "type": "split",
+    "children": [
+      {
+        "id": "369534b30ba937fd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "26d08c368582bd80",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Codebase Video Notes.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Codebase Video Notes"
+            }
+          },
+          {
+            "id": "34ee6e3955cbd66f",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Codebase Video Notes.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Codebase Video Notes"
+            }
+          },
+          {
+            "id": "9450c320a4b1ad39",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "e5bdf7287dfff63b",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Codebase Video Notes.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Codebase Video Notes"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "5f1f3b1ec22027fd",
+  "lastOpenFiles": [
+    "Codebase Video Notes.md",
+    "Codebase video notes",
+    "Bugs.md",
+    "Design.md",
+    "Shit I might've thought was a bug.md",
+    "Suggestions.md",
+    "Images/BigassYellowRoom_Shit9.png",
+    "Overview.md",
+    "Images/Route2604.png",
+    "Difficult shit.md",
+    "Images/Design2.png",
+    "Images/Blocks_Bugs3.png",
+    "Images/Overview4.png",
+    "Images/Overview4.png",
+    "Images/OMEGALOL_Shit8.png",
+    "Images/Overview3.png",
+    "Images/EatingMyAss_Difficulty4.png",
+    "Images/WarpRed_Shit7.png",
+    "Images",
+    "2024-06-19.md",
+    "Untitled.canvas",
+    "Score - 18-06-2024.md",
+    "OET Notes"
+  ]
+}

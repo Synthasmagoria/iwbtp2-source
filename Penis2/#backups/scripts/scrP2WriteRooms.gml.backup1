@@ -1,0 +1,5 @@
+// 2023-12-16 20:14:41
+/// scrP2WriteRooms
+var _f = file_text_open_write("p2_temp");
+file_text_write_string(_f, json_encode(global.__p2_generated_rooms));
+file_text_close(_f);

@@ -1,0 +1,8 @@
+// 2024-06-19 16:02:37
+/// scrP2Tileset3x3AddTile(tileset, index, left, top)
+#args tileset, ind, left, top
+var _tile = ds_map_create();
+_tile[?"top"] = top;
+_tile[?"left"] = left;
+tileset[|ind] = _tile;
+ds_list_mark_as_map(tileset, ind);

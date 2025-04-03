@@ -1,0 +1,8 @@
+// 2023-12-09 12:55:05
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event draw
+draw_set_color(c_white);
+draw_rectangle(0, 0, room_width, room_height, false);

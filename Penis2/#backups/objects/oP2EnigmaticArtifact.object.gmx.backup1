@@ -1,0 +1,13 @@
+// 2023-11-30 22:50:25
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sP2EnigmaticArtifact;
+uses_physics = false;
+
+#event create
+tween = -1;
+silhouette = sP2EnigmaticArtifactSilhouette;
+
+#event draw
+draw_sprite(silhouette, 0, x, y);
+draw_self();

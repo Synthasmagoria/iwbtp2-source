@@ -1,0 +1,12 @@
+// 2023-12-06 19:56:12
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+object = -1; // effect object to instantiate 
+delay = -1; // time in seconds until the effect object instance gets created after the previous has finished
+end_type = -1; // 0 = destroy, 1 = use duration
+duration = -1; // time in seconds until next effect should start (only used if end_type == 1) 
+script = -1;
+destroy = true;

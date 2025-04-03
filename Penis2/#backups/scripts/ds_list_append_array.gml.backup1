@@ -1,0 +1,6 @@
+// 2024-05-19 19:36:35
+/// ds_list_append_array
+#args list, arr
+for (var i = 0, n = array_length_1d(arr); i < n; i++) {
+    ds_list_add(list, arr[i]);
+}

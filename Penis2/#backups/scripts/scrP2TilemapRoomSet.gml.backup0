@@ -1,0 +1,13 @@
+// 2024-06-21 11:00:20
+/// scrP2TilemapRoomSet(tile_data, tile_index)
+#args tile_data, tile_index
+var
+_prev_tile_type = scrP2MainTilesetGetTileType(tile_data[?"tile_index"]),
+_tile_type = scrP2MainTilesetGetTileType(tile_index);
+tile_data[?"tile_index"] = tile_index;
+
+if (tile_exists(tile_data[?"tile"])) {
+    tile_set_region(tile_data[?"tile"], (tile_index % 4) * 32, floor(tile_index / 4), 32, 32);
+}
+
+//tile_data[?"pipe_tile_index"] = scrP2TileGetWallBits()

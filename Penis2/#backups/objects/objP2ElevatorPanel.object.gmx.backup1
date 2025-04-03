@@ -1,0 +1,58 @@
+// 2024-06-24 13:44:19
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2ElevatorPanel;
+uses_physics = false;
+
+#event create
+depth = 0;
+
+button_xsep = 40;
+button_ysep = 34;
+button_number_x = 3;
+button_number_y = 9;
+button_start_x = 34;
+button_start_y = 122;
+
+for (var xx = 0; xx < button_number_x; xx++) {
+    for (var yy = 0; yy < button_number_y; yy++) {
+        instance_create(
+            x + button_start_x + xx * button_xsep,
+            y + button_start_y + yy * button_ysep,
+            objP2ElevatorButton);
+    }
+}
+
+knob_start_x = 174;
+knob_start_y = 135;
+knob_ysep = 56;
+knob_number = 3;
+
+for (var i = 0; i < knob_number; i++) {
+    instance_create(x + knob_start_x, y + knob_start_y + knob_ysep * i, objP2ElevatorKnob);
+}
+
+lever_x = 171;
+lever_y = 283;
+var _lever = instance_create(x + lever_x, y + lever_y, objP2ElevatorLever);
+_lever.length = 119;
+
+#event destroy
+instance_destroy(objP2ElevatorButton);
+instance_destroy(objP2ElevatorKnob);
+instance_destroy(objP2ElevatorLever);
+
+#event other_room_end
+instance_destroy();
+
+#event draw
+
+#event draw_gui
+draw_self();
+
+draw_set_font(fP2Silver32);
+draw_set_color(c_white);
+draw_set_alpha(1.0);
+draw_set_halign(fa_center);
+draw_text(view_wview[0] / 2, view_hview[0] - 32, "Press 'Shoot' (" + chr(global.shootButton[global.controllerMode]) + ") to dismiss");
+draw_set_halign(fa_left);

@@ -1,0 +1,83 @@
+// 2024-06-30 23:03:01
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+persistent = true;
+uses_physics = false;
+
+#event create
+surf = -1;
+sh = shP2CorruptionSlug;
+sh_post = shP2CorruptionSlugPost;
+uvs = sprite_get_uvs(object_get_sprite(objP2CorruptionSlugVisualized), 0);
+noise_texture = sprite_get_texture(sprP2DirectionalNoise, 0);
+noise_uvs = sprite_get_uvs(sprP2DirectionalNoise, 0);
+time = 0;
+depth = -1;
+
+#event destroy
+if (surface_exists(surf)) {
+    surface_free(surf);
+}
+
+#event other_room_start
+var _world = instance_find(oP2World, 0);
+with (objP2CorruptionSlug) {
+    if (roomwrap) {
+        instance_destroy();
+    } else {
+        if (persistent) {
+            x -= (global.__p2_current_room_x - _world.previous_room_x) * view_wview[0];
+            y -= (global.__p2_current_room_y - _world.previous_room_y) * view_hview[0];
+            visual_instance.x -= (global.__p2_current_room_x - _world.previous_room_x) * view_wview[0];
+            visual_instance.y -= (global.__p2_current_room_y - _world.previous_room_y) * view_hview[0];
+        }
+    }
+}
+
+#event draw_end
+
+if (!surface_exists(surf)) {
+    surf = surface_create(view_wview[0], view_hview[0]);
+}
+
+surface_set_target(surf);
+draw_clear_alpha(c_black, 0.0);
+draw_set_blend_mode(bm_add);
+shader_set(sh);
+shader_set_uniform_f(shader_get_uniform(sh, "uv_tl"), uvs[0], uvs[1]);
+shader_set_uniform_f(shader_get_uniform(sh, "uv_br"), uvs[2], uvs[3]);
+
+with (objP2CorruptionSlugVisualized) {
+    shader_set_uniform_f(shader_get_uniform(other.sh, "time"), wiggle_time);
+    shader_set_uniform_f(shader_get_uniform(other.sh, "frequency"), wiggle_frequency);
+    shader_set_uniform_f(shader_get_uniform(other.sh, "amplitude"), wiggle_amplitude);
+    draw_sprite_ext(
+        sprite_index,
+        image_index,
+        x - view_xview[0],
+        y - view_yview[0],
+        image_xscale,
+        image_yscale,
+        image_angle,
+        image_blend,
+        image_alpha);
+}
+ 
+shader_reset();
+draw_set_blend_mode(bm_normal);
+surface_reset_target();
+
+time += 1/50;
+
+var _world = instance_find(oP2World, 0), _bb_texture = -1;
+if (_world && surface_exists(_world.backbuffer))
+    _bb_texture = surface_get_texture(scrP2WorldRequestBackbuffer());
+shader_set(sh_post);
+if (_bb_texture != -1)
+    texture_set_stage(shader_get_sampler_index(sh_post, "backbuffer"), _bb_texture);
+shader_set_uniform_f(shader_get_uniform(sh_post, "noise_tl"), noise_uvs[0], noise_uvs[1]);
+shader_set_uniform_f(shader_get_uniform(sh_post, "noise_br"), noise_uvs[2], noise_uvs[3]);
+shader_set_uniform_f(shader_get_uniform(sh_post, "time"), time);
+texture_set_stage(shader_get_sampler_index(sh_post, "noise_tex"), noise_texture);
+draw_surface(surf, view_xview[0], view_yview[0]);
+shader_reset();

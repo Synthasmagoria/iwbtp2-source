@@ -1,0 +1,5 @@
+// 2023-12-15 19:19:15
+/// ds_list_add_map(list, map)
+#args list, map
+ds_list_add(list, map);
+ds_list_mark_as_map(list, ds_list_size(list) - 1);

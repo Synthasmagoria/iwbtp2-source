@@ -1,0 +1,7 @@
+// 2024-01-27 17:22:06
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+sprite_index = sprP2City;
+
+#event create

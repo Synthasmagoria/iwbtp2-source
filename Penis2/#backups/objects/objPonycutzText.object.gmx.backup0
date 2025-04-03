@@ -1,0 +1,51 @@
+// 2024-07-02 09:46:44
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+
+text = "Here lies Ponycutz'#unfinished demos#Released exclusively on Vk#W.I.P in peace.";
+text_length = string_length(text);
+text_index = 0;
+font = fP2Elephant16;
+active = false;
+yoffset = 16;
+current_yoffset = 0;
+
+tweens = ds_list_create();
+
+#event destroy
+event_user(0);
+if (ds_exists(tweens, ds_type_list))
+    ds_list_destroy(tweens);
+
+#event other_room_end
+instance_destroy();
+
+#event other_user0
+for (var i = 0, n = ds_list_size(tweens); i < n; i++)
+    if (TweenExists(ds_list_find_value(tweens, i)))
+        TweenStop(ds_list_find_value(tweens, i));
+ds_list_clear(tweens);
+
+#event other_user1
+event_user(0);
+    
+if (active) {
+    text_index = 0;
+    ds_list_add(tweens, TweenFire(id, EaseLinear, 0, true, 0.0, 2.5, "text_index", 0, text_length));
+    ds_list_add(tweens, TweenFire(id, EaseInOutCubic, 0, true, 0.0, 0.25, "image_alpha", image_alpha, 1.0));
+    ds_list_add(tweens, TweenFire(id, EaseOutCubic, 0, true, 0.0, 0.5, "current_yoffset", 0.0, yoffset));
+} else {
+    ds_list_add(tweens, TweenFire(id, EaseInOutCubic, 0, true, 0.0, 1.0, "image_alpha", image_alpha, 0.0));
+    ds_list_add(tweens, TweenFire(id, EaseOutCubic, 0, true, 0.0, 1.0, "current_yoffset", current_yoffset, 0.0));
+}
+
+#event draw
+draw_set_font(font);
+draw_set_color(c_white);
+draw_set_halign(fa_center);
+draw_set_valign(fa_top);
+draw_text_color(x, y + current_yoffset, string_copy(text, 0, text_index), image_blend, image_blend, image_blend, image_blend, image_alpha);
+draw_set_halign(fa_left);

@@ -1,0 +1,29 @@
+// 2023-11-21 19:35:28
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+spawn_rate = 0.4;
+spawn_timer = 0.0;
+
+#event step
+spawn_timer += (1/50);
+while (spawn_timer >= spawn_rate) {
+    spawn_timer -= spawn_rate;
+    
+    var _spx, _spy;
+    if (random(1) > 0.5) {
+        _spx = random(room_width);
+        _spy = choose(0, room_height - 1);
+    } else {
+        _spx = choose(0, room_width - 1);
+        _spy = random(room_height);
+    }
+    
+    var _particle = instance_create(_spx, _spy, objCorruptionParticle);
+    _particle.direction = point_direction(_spx, _spy, room_width / 2, room_height / 2) + random_range(-75, 75);
+    _particle.gravity_direction = random(360);
+    _particle.gravity = 0.1;
+    _particle.speed = random_range(3, 5);
+}

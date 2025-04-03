@@ -1,0 +1,16 @@
+// 2023-12-07 21:12:51
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+sprite_index = sprP2Censor;
+
+#event create
+depth = -9000000;
+
+#event step
+var _hover = point_in_rectangle(mouse_x, mouse_y, bbox_left, bbox_top, bbox_right, bbox_bottom);
+image_index = min(_hover, image_number - 1);
+if (mouse_check_button_pressed(mb_left) && _hover) {
+    sprite_index = sprP21984;
+    audio_play_sound(sndP2DiscordNotification, 0, false);
+}

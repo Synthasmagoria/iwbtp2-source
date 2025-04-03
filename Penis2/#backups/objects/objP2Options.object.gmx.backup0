@@ -1,0 +1,75 @@
+// 2024-05-22 22:26:42
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2PMDTextboxPurple9Slice;
+uses_physics = false;
+
+#event create
+if (live_call()) return live_result;
+font = fP212;
+options = -1;
+text_margin_x = 24;
+text_margin_y = 14;
+select_callback = -1;
+text_ysep = -4;
+
+_text_height = -1;
+_option_number = 0;
+_option_index = 0;
+
+audio_play_sound(sndP2DialogueOptionMove, 0, false);
+
+#event destroy
+if (live_call()) return live_result;
+
+#event step
+if (live_call()) return live_result;
+if (scrButtonCheckPressed(global.downButton)) {
+    _option_index = (_option_index + 1) % _option_number;
+    audio_play_sound(sndP2DialogueOptionMove, 0, false);
+} else if (scrButtonCheckPressed(global.upButton)) {
+    if (_option_index == 0) {
+        _option_index = _option_number - 1;
+    } else {
+        _option_index--;
+    }
+    audio_play_sound(sndP2DialogueOptionMove, 0, false);
+}
+
+if (scrButtonCheckPressed(global.jumpButton)) {
+    if (script_exists(select_callback)) {
+        script_execute(select_callback, id, _option_index, options[_option_index]);
+    }
+    instance_destroy();
+}
+
+#event other_room_end
+instance_destroy();
+
+#event other_user0
+if (live_call()) return live_result;
+draw_set_font(font);
+_text_height = string_height(options[0]);
+_option_number = array_length_1d(options);
+
+instance_set_width(id, scrP2ArrayGetLongestString(options) + text_margin_x * 2 + 16);
+instance_set_height(id, _text_height * _option_number + text_margin_y * 2);
+
+#event draw nothing
+
+
+#event draw_gui
+if (live_call()) return live_result;
+scrP2Draw9Slice_Stretch(sprite_index, x, y, sprite_width, sprite_height);
+
+draw_set_font(font);
+draw_set_color(c_white);
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+for (var i = 0; i < _option_number; i++) {
+    draw_text(x + text_margin_x, y + text_margin_y + _text_height * i, options[i]);
+}
+
+draw_set_halign(fa_right);
+draw_text(bbox_right - text_margin_x, y + text_margin_y + _text_height * _option_index, "<");
+draw_set_halign(fa_left);

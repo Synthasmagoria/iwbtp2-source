@@ -1,0 +1,82 @@
+// 2024-01-31 18:06:06
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprTriggerMask;
+uses_physics = false;
+
+#event create
+
+event_inherited();
+
+color_change = 0.25;
+value_clip = 0.0;
+reach = 0.0;
+backbuffer = -1;
+transitioning = false;
+time = 0;
+
+thickness = 12.0;
+edge_offset = 38.0;
+
+sh = shP2WorldBorder;
+
+// Destroy if world border glasses havent been collected yet
+if (!global.p2Item[P2_ITEM.WORLD_BORDER_DETECTOR])
+    instance_destroy();
+
+#event step
+
+time += (1/50);
+
+var
+_player = instance_find(objPlayer, 0),
+_lower_border = edge_offset - thickness,
+_upper_border = view_xview[0] + view_wview[0] - edge_offset - thickness;
+if (_player &&
+    !transitioning &&
+    ((_player.y > _upper_border && _player.y <= _upper_border + thickness * 2.0) ||
+    (_player.y > _lower_border && _player.y <= _lower_border + thickness * 2.0)))
+{
+    transitioning = true;
+    
+    var _p = instance_create(_player.x, _player.y, objP2WorldBorderTransitionPlayer);
+    _p.speed = _player.speed;
+    _p.direction = _player.direction;
+    _p.sprite_index = _player.sprite_index;
+    _p.friction = 0.6;
+    instance_destroy(_player);
+    
+    audio_play_sound(sndP2WorldBorderSplash, 0, false);
+    audio_play_sound(sndP2WorldBorderTransition, 0, false);
+    //audio_stop_sound(bgm_get_music_id());
+    
+    TweenFire(id, EaseInOutQuad, 0, true, 0.0, 1.5, "reach", reach, 250.0);
+    TweenFire(id, EaseInOutQuad, 0, true, 0.0, 1.5, "color_change", color_change, 0.5);
+    var _t = TweenFire(id, EaseInOutQuad, 0, true, 1.0, 2.5, "value_clip", value_clip, 1.2);
+    TweenAddCallbackUser(_t, TWEEN_EV_FINISH, id, 0);
+}
+
+#event other_room_start
+instance_set_width(id, view_wview[0]);
+instance_set_height(id, view_hview[0]);
+x = view_xview[0];
+y = view_yview[0];
+
+#event draw
+
+#event draw_end
+if (!surface_exists(backbuffer))
+{
+    backbuffer = surface_create(800, 608);
+}
+
+surface_copy(backbuffer, x, y, application_surface);
+shader_set(sh);
+shader_set_uniform_f(shader_get_uniform(sh, "time"), time);
+shader_set_uniform_f(shader_get_uniform(sh, "resolution"), 800, 608);
+shader_set_uniform_f(shader_get_uniform(sh, "reach"), reach);
+shader_set_uniform_f(shader_get_uniform(sh, "value_clip"), value_clip);
+shader_set_uniform_f(shader_get_uniform(sh, "color_change"), color_change);
+//texture_set_stage(shader_get_sampler_index(sh, "backbuffer"), surface_get_texture(backbuffer));
+draw_surface(backbuffer, x, y);
+shader_reset();

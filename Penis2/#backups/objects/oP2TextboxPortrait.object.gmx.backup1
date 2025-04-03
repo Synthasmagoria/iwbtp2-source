@@ -1,0 +1,27 @@
+// 2024-05-11 10:05:42
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sP2PMDPorttraitPurple;
+uses_physics = false;
+
+#event create
+portrait = sprP2TravelerPortrait;
+emotion = P2_EMOTIONS.NEUTRAL;
+portrait_offset_x = 14;
+portrait_offset_y = 8;
+portrait_offset_w = 64;
+portrait_offset_h = 64;
+
+#event draw
+draw_set_alpha(191/255);
+draw_set_color(c_black);
+draw_rectangle(
+    x + portrait_offset_x,
+    y + portrait_offset_y,
+    x + portrait_offset_x + portrait_offset_w,
+    y + portrait_offset_y + portrait_offset_h, 
+    true);
+draw_set_alpha(1);
+draw_set_color(c_white);
+draw_self();
+draw_sprite(portrait, emotion, x + portrait_offset_x, y + portrait_offset_y);

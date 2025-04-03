@@ -1,0 +1,39 @@
+// 2024-06-28 13:13:53
+/// scrP2WallCreateBlocks(wall_bits, xx, yy, blocks_out)
+#args wall_bits, xx, yy, blocks_out
+
+var _block_thickness = 1;
+ds_list_clear(blocks_out);
+
+switch (wall_bits) {
+    case 0:
+        break;
+    case 511 ^ P2_TILING_BITS.MIDDLE:
+    case 511:
+        ds_list_add(blocks_out, instance_create(xx, yy, objBlock));
+        break;
+    default:
+        var _block;
+        
+        if (int_read_bit(wall_bits, P2_TILING_BIT_POSITIONS.RIGHT)) {
+            _block = instance_create(xx + global.__p2_tile_size - _block_thickness, yy, objBlock);
+            instance_set_width(_block, _block_thickness);
+            ds_list_add(blocks_out, _block);
+        }
+        if (int_read_bit(wall_bits, P2_TILING_BIT_POSITIONS.TOP)) {
+            _block = instance_create(xx, yy, objBlock);
+            instance_set_height(_block, _block_thickness);
+            ds_list_add(blocks_out, _block);
+        }
+        if (int_read_bit(wall_bits, P2_TILING_BIT_POSITIONS.LEFT)) {
+            _block = instance_create(xx, yy, objBlock);
+            instance_set_width(_block, _block_thickness);
+            ds_list_add(blocks_out, _block);
+        }
+        if (int_read_bit(wall_bits, P2_TILING_BIT_POSITIONS.BOTTOM)) {
+            _block = instance_create(xx, yy + global.__p2_tile_size - _block_thickness, objBlock);
+            instance_set_height(_block, _block_thickness);
+            ds_list_add(blocks_out, _block);
+        }
+        break;
+}

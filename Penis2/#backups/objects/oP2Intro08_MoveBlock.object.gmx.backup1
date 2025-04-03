@@ -1,0 +1,26 @@
+// 2024-04-29 11:17:24
+#event properties (no comments/etc. here are saved)
+parent_index = objBlock;
+sprite_index = sprP2BlockTile;
+solid = true;
+uses_physics = false;
+
+#event create
+image_indices = -1;
+
+#event other_room_start
+var _num = image_xscale * image_yscale;
+for (var xx = image_xscale - 1; xx >= 0; xx--) {
+    for (var yy = image_yscale - 1; yy >= 0; yy--) {
+        image_indices[xx, yy] = irandom(image_number - 1);
+    }
+}
+
+#event draw
+_sw = sprite_get_width(sprite_index);
+_sh = sprite_get_height(sprite_index);
+for (var xx = image_xscale - 1; xx >= 0; xx--) {
+    for (var yy = image_yscale - 1; yy >= 0; yy--) {
+        draw_sprite(sprite_index, image_indices[xx + yy * image_yscale], x + xx * _sw, y + yy * _sh);
+    }
+}

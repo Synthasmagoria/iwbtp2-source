@@ -1,0 +1,30 @@
+// 2024-07-06 17:31:43
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprTriggerMask;
+visible = false;
+uses_physics = false;
+
+#event create
+roomTo = rTemplate;
+warp_xoffset = 0;
+warp_yoffset = 0;
+indicate_wrap = false;
+
+#event collision:objPlayer
+if (point_in_rectangle(other.x, other.y, bbox_left, bbox_top, bbox_right, bbox_bottom))
+{
+    if (indicate_wrap)
+    {
+        var _wrap_indicator = instance_create(0, 0, objP2WrapIndicator);
+        if (room == roomTo)
+            with (_wrap_indicator)
+                event_user(0);
+    }
+    
+    objPlayer.x += warp_xoffset;
+    objPlayer.y += warp_yoffset;
+    
+    if (room != roomTo)
+        room_goto(roomTo);
+}

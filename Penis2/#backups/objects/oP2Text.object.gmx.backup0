@@ -1,0 +1,18 @@
+// 2023-12-07 20:16:09
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create|@desc
+
+text = "<not input>"
+font = fP2Arial40
+color = c_black
+offset = 4
+
+#event draw
+
+draw_set_font(font)
+draw_set_color(color)
+draw_text(x + offset, y + offset, text)
+draw_set_color(c_white)

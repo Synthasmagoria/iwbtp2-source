@@ -1,0 +1,15 @@
+// 2024-06-17 17:38:57
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+distance_from_middle = 0;
+middle_x = room_width / 2;
+middle_y = room_height / 2;
+
+#event step_end
+var _player = instance_find(objPlayer, 0);
+if (_player) {
+    distance_from_middle = point_distance(_player.x, _player.y, middle_x, middle_y);
+}

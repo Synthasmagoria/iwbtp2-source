@@ -1,0 +1,8 @@
+// 2024-01-27 12:19:14
+/// scrP2TilemapAddTiledata(td)
+#args td
+var
+_tx = floor(td[?"tile_x"] / 32) + global.__p2_current_room_x * 25,
+_ty = floor(td[?"tile_y"] / 32) + global.__p2_current_room_y * 19;
+global.__p2_tilemap[#_tx, _ty] = td;
+ds_list_add_map(global.__p2_room_tiles[?room_get_name(room)], td);

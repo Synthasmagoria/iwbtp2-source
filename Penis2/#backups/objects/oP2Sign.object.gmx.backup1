@@ -1,0 +1,79 @@
+// 2024-06-17 17:51:50
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sP2Sign;
+uses_physics = false;
+
+#event create
+textbox = noone;
+reading = false;
+sound = -1;
+popup_sound = sndSignPopup;
+phase = 0;
+phase_number = 3;
+length = -1;
+time = 0;
+touching = false;
+text = "<DEFAULT TEXT>";
+portrait = -1;
+portrait_emotions = -1;
+
+textbox_callback_scripts = ds_list_create();
+textbox_callback_script_lines = ds_list_create();
+
+#event destroy
+ds_list_destroy(textbox_callback_scripts);
+ds_list_destroy(textbox_callback_script_lines);
+
+#event step
+time += 1 / room_speed;
+touching = place_meeting(x, y, objPlayer);
+
+switch (phase) {
+    case 0:
+    if (touching && !reading && scrButtonCheckPressed(global.upButton)) {
+        reading = true;
+        with (objPlayer) {
+        	frozen = true;
+        }
+        audio_play_sound(sound, 0, 0);
+        event_user(0);
+    }
+    break;
+    
+    case 1:
+    if (length == -1 || time > length) {
+        audio_play_sound(popup_sound, 0, 0);
+        textbox = scrP2TextboxCreate(text, portrait, portrait_emotions, 1, textbox_callback_scripts, textbox_callback_script_lines);
+        event_user(0);
+    }
+    break;
+    
+    case 2:
+    if (!instance_exists(textbox)) {
+        reading = false;
+        event_user(0);
+        with (objPlayer) {
+        	frozen = false;
+        	print("ye")
+        }
+    }
+    break;
+}
+
+#event other_room_start
+if (length == -1 && sound != -1) {
+	length = audio_sound_length(sound);
+}
+
+#event other_room_end
+instance_destroy();
+
+#event other_user0|phase++ / time reset
+
+phase = (phase + 1) % phase_number;
+time = 0;
+
+#event draw_gui
+if (phase == 0 && touching && !reading)
+    scrP2DrawInteractionArrow(objPlayer.x, objPlayer.y - 24);

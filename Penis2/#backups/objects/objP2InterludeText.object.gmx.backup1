@@ -1,0 +1,39 @@
+// 2024-06-17 17:51:46
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+if (live_call()) return live_result;
+text = "Returning to CN2.5";
+text_progress = 0;
+text_length = string_length(text);
+font = fP2Silver32;
+
+TweenFire(id, EaseLinear, 0, true, 12.0, 6.0, "text_progress", 0, text_length);
+TweenAddCallbackUser(
+    TweenFire(id, EaseLinear, 0, true, 0.0, 30.0, "image_angle", 0.0, 1.0),
+    TWEEN_EV_FINISH,
+    id,
+    0);
+
+depth = -1000000;
+
+#event other_user0
+scrP2InterludeEvent_P2Clear();
+
+#event other_room_start
+draw_set_font(font);
+x = room_width / 2 - string_width(text) / 2;
+y = room_height / 2 - room_height / 4 - room_height / 16;
+
+#event draw
+var _txt = string_copy(text, 0, text_progress);
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+draw_set_font(font);
+draw_set_color(c_white);
+draw_text(x + 1, y + 1, _txt);
+draw_set_color(c_red);
+draw_text(x, y, _txt);
+draw_set_color(c_white);

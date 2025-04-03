@@ -1,0 +1,3 @@
+/// scrP2ForestGeneratorEvent_GotoWinterHallucinationForestSafe
+var _not_in_tile_area_monitor = instance_create(0, 0, objP2ForestGotoSafe);
+_not_in_tile_area_monitor.not_in_tile_area_callback = scrP2PlayerTileAreaMonitorEvent_GotoWinterHallucinationForest;

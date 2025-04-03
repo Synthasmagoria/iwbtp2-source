@@ -1,0 +1,66 @@
+// 2024-05-18 11:34:25
+//
+// Simple passthrough vertex shader
+//
+attribute vec3 in_Position;                  // (x,y,z)
+//attribute vec3 in_Normal;                  // (x,y,z)     unused in this shader.
+attribute vec4 in_Colour;                    // (r,g,b,a)
+attribute vec2 in_TextureCoord;              // (u,v)
+
+varying vec2 v_vTexcoord;
+varying vec4 v_vColour;
+varying vec2 v_vPosition;
+
+void main()
+{
+    vec4 object_space_pos = vec4( in_Position.x, in_Position.y, in_Position.z, 1.0);
+    gl_Position = gm_Matrices[MATRIX_WORLD_VIEW_PROJECTION] * object_space_pos;
+    
+    v_vColour = in_Colour;
+    v_vTexcoord = in_TextureCoord;
+    v_vPosition = in_Position.xy;
+}
+
+//######################_==_YOYO_SHADER_MARKER_==_######################@~//
+// Simple passthrough fragment shader
+//
+varying vec2 v_vTexcoord;
+varying vec4 v_vColour;
+varying vec2 v_vPosition;
+
+uniform vec2 line_coord;
+uniform float resolution_x;
+uniform vec2 grain_gradient;
+uniform float time;
+uniform sampler2D screen_buffer;
+uniform vec4 uvs;
+
+float random(vec2 st) {return fract(sin(dot(mod(st, 10.0), vec2(58.2894, 28.483))) * 43028.49);}
+float area(float start, float end, float val) {return step(val, end) * step(start, val);}
+float remap(float from_min, float from_max, float to_min, float to_max, float val) {
+    return ((val - from_min) / (from_max - from_min)) * (to_max - to_min) + to_min;
+}
+vec2 remap(vec2 from_min, vec2 from_max, vec2 to_min, vec2 to_max, vec2 val) {
+    return ((val - from_min) / (from_max - from_min)) * (to_max - to_min) + to_min;
+}
+
+#define AMPLIFICATION 0.04
+#define SPEED 0.2
+#define FREQUENCY 173.5383
+
+void main() {
+    vec2 uv_norm = remap(uvs.xy, vec2(uvs.z, uvs.w), vec2(0.0), vec2(1.0), v_vTexcoord);
+    float line = area(line_coord.x, line_coord.y, v_vPosition.x);
+    vec2 uv = vec2(mix(v_vPosition.x / resolution_x, line_coord.x / resolution_x, line), uv_norm.y);
+    float freq = remap(line_coord.x, line_coord.y, grain_gradient.x, grain_gradient.y, v_vPosition.x);
+    
+    float fbm = 0.0;
+    float val = uv_norm.x * FREQUENCY * freq + time * SPEED;
+    float freqs[4]; freqs[0] = 0.9; freqs[1] = 0.58; freqs[2] = 0.24; freqs[3] = 0.111;
+    float amps[4]; amps[0] = 0.7; amps[1] = 2.98; amps[2] = 5.09; amps[3] = 0.9;
+    float speeds[4]; speeds[0] = 1.2; speeds[1] = 0.8; speeds[2] = 1.7; speeds[3] = 0.5;
+    for (int i = 0; i < 4; i++)
+        fbm += (sin(val * freqs[i] + time * speeds[i]) * amps[i]) / 4.0;
+    
+    gl_FragColor = texture2D(screen_buffer, uv + vec2(0.0, fbm * line * freq * AMPLIFICATION));
+}

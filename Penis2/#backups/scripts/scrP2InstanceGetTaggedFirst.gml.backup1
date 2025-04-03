@@ -1,0 +1,9 @@
+// 2024-05-11 12:18:02
+/// scrP2InstanceGetTaggedFirst
+#args obj, tag
+with (obj) {
+    if (variable_instance_get(id, "__p2_tag") == tag) {
+        return id;
+    }
+}
+return noone;

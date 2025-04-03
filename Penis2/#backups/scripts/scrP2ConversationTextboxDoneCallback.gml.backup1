@@ -1,0 +1,4 @@
+// 2024-05-09 14:05:11
+/// scrP2ConversationTextboxDoneCallback
+if (live_call(argument[0])) return live_result;
+instance_destroy(objP2Conversation);

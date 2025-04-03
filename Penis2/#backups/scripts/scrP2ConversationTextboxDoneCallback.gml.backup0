@@ -1,0 +1,3 @@
+// 2024-05-26 19:28:09
+/// scrP2ConversationTextboxDoneCallback
+instance_destroy(objP2Conversation);

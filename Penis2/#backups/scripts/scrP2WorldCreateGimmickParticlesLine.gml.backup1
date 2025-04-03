@@ -1,0 +1,6 @@
+// 2024-06-23 14:30:01
+/// scrP2WorldCreateGimmickParticlesLine
+#args x1, x2, yy
+with (objP2PushOutBlockManager) {
+    // TODO: reprogram
+}

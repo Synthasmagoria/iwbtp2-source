@@ -1,0 +1,16 @@
+// 2024-06-20 15:21:25
+/// scrP2MainTilesetGetWallBits
+
+var _walls = 511 ^ P2_TILING_BITS.MIDDLE;
+_adjacent_tile = tile_layer_find(_td, _tx + 32, _ty);
+if (_adjacent_tile != -1 && floor(tile_get_top(_adjacent_tile) / _ts) == P2_TILE_TYPE.HORIZONTAL)
+    _walls = int_set_bit(_walls, P2_TILING_BIT_POSITIONS.RIGHT, false);
+_adjacent_tile = tile_layer_find(_td, _tx, _ty - 32);
+if (_adjacent_tile != -1 && floor(tile_get_top(_adjacent_tile) / _ts) == P2_TILE_TYPE.VERTICAL)
+    _walls = int_set_bit(_walls, P2_TILING_BIT_POSITIONS.TOP, false);
+_adjacent_tile = tile_layer_find(_td, _tx - 32, _ty);
+if (_adjacent_tile != -1 && floor(tile_get_top(_adjacent_tile) / _ts) == P2_TILE_TYPE.HORIZONTAL)
+    _walls = int_set_bit(_walls, P2_TILING_BIT_POSITIONS.LEFT, false);
+_adjacent_tile = tile_layer_find(_td, _tx, _ty + 32);
+if (_adjacent_tile != -1 && floor(tile_get_top(_adjacent_tile) / _ts) == P2_TILE_TYPE.VERTICAL)
+    _walls = int_set_bit(_walls, P2_TILING_BIT_POSITIONS.BOTTOM, false);

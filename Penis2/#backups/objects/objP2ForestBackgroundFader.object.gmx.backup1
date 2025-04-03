@@ -1,0 +1,27 @@
+// 2024-07-01 08:39:23
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+distance_measurer = noone;
+bg_index = 0;
+
+blends = array(6);
+
+#event step_end
+background_alpha[bg_index] = clamp(invlerp(2500, 800, distance_measurer.distance_from_middle), 0, 1);
+
+var _darken = clamp(invlerp(6000, 1000, distance_measurer.distance_from_middle), 0, 1);
+for (var i = 0; i < 6; i++) {
+    background_blend[i] = make_color_rgb(
+        color_get_red(blends[i]) * _darken,
+        color_get_green(blends[i]) * _darken,
+        color_get_blue(blends[i]) * _darken);
+}
+
+#event other_room_start
+distance_measurer = instance_find(objP2ForestDistanceMeasurement, 0);
+for (var i = 0; i < 6; i++) {
+    blends[i] = background_blend[i];
+}

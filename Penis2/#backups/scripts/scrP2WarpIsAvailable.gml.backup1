@@ -1,0 +1,6 @@
+// 2024-06-27 15:21:59
+/// scrP2WarpIsAvailable
+with (objPlayer) {
+    return !frozen && (global.p2Crystal == global.saveP2Crystal) && global.gameStarted && instance_exists(objPlayer);
+}
+return false;

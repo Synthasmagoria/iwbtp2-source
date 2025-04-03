@@ -1,0 +1,12 @@
+// 2024-06-22 14:38:18
+/// scrP2WorldResetDevice_Interact
+#args inst
+if (audio_is_playing(global.currentMusic)) {
+    audio_stop_sound(global.currentMusic);
+}
+with (objPlayer) {
+    frozen = true;
+}
+with (inst) {
+    event_user(0);
+}

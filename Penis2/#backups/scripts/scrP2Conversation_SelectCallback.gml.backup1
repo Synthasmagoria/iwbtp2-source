@@ -1,0 +1,5 @@
+// 2024-05-10 10:37:53
+/// scrP2Conversation_SelectCallback
+#args options_inst, ind, selection
+var _conversation = instance_find(objP2Conversation, 0);
+scrP2ConversationGoto(_conversation, selection);

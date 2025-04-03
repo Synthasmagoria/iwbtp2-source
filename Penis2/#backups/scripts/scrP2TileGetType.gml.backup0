@@ -1,0 +1,4 @@
+// 2023-12-10 19:51:59
+/// scrP2TileGetType(tile)
+#args tile
+return floor(tile_get_top(tile) / 32);

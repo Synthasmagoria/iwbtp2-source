@@ -1,0 +1,55 @@
+// 2024-05-02 20:43:51
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2ElevatorKnob;
+uses_physics = false;
+
+#event create
+if (live_call()) return live_result;
+hover = false;
+depth = -1;
+twisting = false;
+accumulated_angle = 0;
+prev_angle = 0;
+image_angle_base = 0;
+image_angle_turn = 0;
+image_angle_turn_max = 4;
+sound = array(sndP2ElevatorKnob01, sndP2ElevatorKnob02, sndP2ElevatorKnob03);
+
+#event step
+if (live_call()) return live_result;
+if (hover && !twisting && mouse_check_button_pressed(mb_left)) {
+    twisting = true;
+    prev_angle = point_direction(x, y, mouse_x, mouse_y);
+} else if (twisting && mouse_check_button_released(mb_left)) {
+    twisting = false;
+}
+
+if (twisting) {
+    var _current_angle = point_direction(x, y, mouse_x, mouse_y);
+    var _distance_factor = clamp(point_distance(x, y, mouse_x, mouse_y) / 45, 0.1, 1.1) - 0.1;
+    accumulated_angle += angle_difference(_current_angle, prev_angle) * _distance_factor;
+    image_angle_turn = image_angle_turn_max * (accumulated_angle / 45);
+    if (abs(accumulated_angle) >= 45) {
+        image_angle_base += sign(accumulated_angle) * 45;
+        accumulated_angle = abs(accumulated_angle % 45) * sign(accumulated_angle);
+        audio_play_sound(sound[irandom(array_length_1d(sound) - 1)], 0, false);
+    }
+    prev_angle = _current_angle;
+} else {
+    image_blend = c_white;
+    image_angle_turn = 0;
+}
+
+image_angle = image_angle_base + image_angle_turn;
+
+#event mouse_enter
+hover = true;
+
+#event mouse_leave
+hover = false;
+
+#event draw_gui
+if (live_call()) return live_result;
+draw_self();
+draw_sprite_ext(sprP2ElevatorKnobInputHint, 0, x, y, image_xscale, image_yscale, image_angle, image_blend, hover);

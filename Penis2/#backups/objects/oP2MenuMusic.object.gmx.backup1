@@ -1,0 +1,26 @@
+// 2023-12-09 13:13:47
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+sprite_index = sprPlayMusic;
+
+#event create
+// This object needs '-2' in scrGetMusic in order to work
+if (global.currentMusicID != musGuyRock) {
+    global.currentMusicID = musGuyRock;
+    global.currentMusic = audio_play_sound(global.currentMusicID, 0, false);
+}
+
+restart = true;
+
+#event other_room_end
+instance_destroy();
+
+#event destroy
+if (global.currentMusicID == musGuyRock && restart) {
+    global.currentMusicID = -1;
+    if (audio_is_playing(global.currentMusic)) {
+        audio_stop_sound(global.currentMusic);
+    }
+    global.currentMusic = noone;
+}

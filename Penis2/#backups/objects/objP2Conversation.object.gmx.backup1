@@ -1,0 +1,70 @@
+// 2024-06-24 13:16:19
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+
+enum P2_EMOTIONS {
+    NEUTRAL,
+    HAPPY,
+    ANNOYED,
+    FLUSTERED,
+    PENSIVE
+}
+
+text = ds_list_create();
+speeds = ds_list_create();
+emotions = ds_list_create();
+branches = ds_list_create();
+connections = ds_map_create();
+textbox_callbacks = ds_list_create();
+textbox_callback_lines = ds_list_create();
+portrait = -1;
+index = 0;
+
+textbox_instance = noone;
+conversation_end_callback = -1;
+
+#event destroy
+ds_list_destroy(text);
+ds_list_destroy(emotions);
+ds_list_destroy(speeds);
+ds_list_destroy(branches);
+ds_map_destroy(connections);
+ds_list_destroy(textbox_callbacks);
+ds_list_destroy(textbox_callback_lines);
+
+if (instance_exists(textbox_instance)) {
+    instance_destroy(textbox_instance);
+}
+
+with (objPlayer) {
+    frozen = false;
+}
+
+#event step
+if (instance_exists(textbox_instance)) {
+    if (scrButtonCheckPressed(global.jumpButton) &&
+        ((!scrP2TextboxTypewriterFinished(textbox_instance) || !scrP2TextboxIsLastLine(textbox_instance)) || (!is_array(branches[|index]) && branches[|index] == -1))) {
+        scrP2TextboxAdvance(textbox_instance);
+    }
+    if (!instance_exists(textbox_instance)) {
+        if (script_exists(conversation_end_callback)) {
+            script_execute(conversation_end_callback, id);
+        }
+        instance_destroy();
+    }
+} else {
+    instance_destroy();
+}
+
+#event other_room_end
+
+instance_destroy();
+
+#event other_user0
+
+textbox_instance = scrP2TextboxCreate(text[|index], portrait, emotions[|index], speeds[|index]);
+textbox_instance.manual = false;
+scrP2ConversationGoto(id, 0);

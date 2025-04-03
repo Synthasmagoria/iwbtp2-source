@@ -1,0 +1,132 @@
+// 2023-12-14 19:38:20
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+enum P2_TILE_TYPE {
+    NOTHING,
+    FILLING,
+    BLOCK,
+    VERTICAL,
+    HORIZONTAL
+}
+
+enum P2_DIRECTION {
+    RIGHT,
+    UP, 
+    LEFT,
+    DOWN
+}
+
+enum P2_WALLS {NONE, R, U, RU, L, RL, UL, RUL, D, RD, UD, RUD, LD, RLD, ULD, RULD}
+
+target_depth = -1000000;
+tile_size = 32;
+tile_shift_max = 3;
+
+top_tiles = -1;
+tileset_width = 4;
+block_thickness = 2;
+in_tile_area = false;
+tile_layer_alpha = 1.0;
+
+// TODO: Pooling tilemap data structures
+tilemap_width = floor(room_width / tile_size);
+tilemap_height = floor(room_height / tile_size);
+for (var xx = tilemap_width - 1; xx >= 0; xx--)
+    for (var yy = tilemap_height - 1; yy >= 0; yy--)
+        tilemap[xx, yy] = -1;
+
+pipes_tileset = tP2Pipes;
+pipes_depth = 900000;
+
+/*
+{ Pooling required for the sake of performance probably
+    "tile_id" : <real>,
+    "background_tile_id" : <real>,
+    "blocks" : [<instance_id>, ...]
+}
+*/
+
+#event destroy
+for (var xx = 0; xx < tilemap_width; xx++)
+    for (var yy = 0; yy < tilemap_height; yy++)
+        if (ds_exists(tilemap[xx, yy], ds_type_map))
+            ds_map_destroy(tilemap[xx, yy]);
+
+#event step
+tile_layer_alpha = clamp(tile_layer_alpha + sign(in_tile_area - 0.5) * 0.02 * -1, 0.0, 1.0);
+in_tile_area = false;
+
+for (var i = 0, n = array_length_1d(top_tiles); i < n; i++)
+    tile_set_alpha(top_tiles[i], tile_layer_alpha);
+
+#event other_room_start|rng tiles/spuikes, block spawn etc
+
+random_set_seed(oP2Seed.seed + room);
+//random_set_seed(203956798 + room);
+
+if (!global.secretItem[0])
+{
+    var
+    _tiles = tile_get_ids_at_depth(target_depth),
+    n = array_length_1d(_tiles);
+    
+    for (var i = 0; i < n; i++)
+    {
+        tile_set_region(
+            _tiles[i],
+            tile_get_left(_tiles[i]) + irandom(tile_shift_max) * tile_size,
+            tile_get_top(_tiles[i]),
+            tile_size,
+            tile_size);
+        
+        instance_create(tile_get_x(_tiles[i]), tile_get_y(_tiles[i]), objBlock);
+    }
+}
+else
+{
+    top_tiles = tile_get_ids_at_depth(target_depth);
+
+    var
+    _walls = array_create(array_length_1d(top_tiles)),
+    _t, _tx, _ty, _tile_type, _tile_data;
+    
+    for (var i = 0, n = array_length_1d(top_tiles); i < n; i++)
+    {
+        _t = top_tiles[i];
+        _tx = tile_get_x(_t);
+        _ty = tile_get_y(_t);
+        _tile_type = floor(tile_get_top(_t) / tile_size);
+        
+        _walls[i] = scrP2TileGetWallBits(_t);
+        
+        tile_set_region(
+            _t,
+            tile_get_left(_t) + irandom(tile_shift_max) * tile_size,
+            tile_get_top(_t),
+            tile_size,
+            tile_size);
+        
+        _tile_data = ds_map_create();
+        _tile_data[?"tile"] = top_tiles[i];
+        _tile_data[?"pipe_tile"] = tile_add(pipes_tileset, tile_size * _walls[i], 0, tile_size, tile_size, _tx, _ty, pipes_depth);
+        ds_map_add_list(_tile_data, "blocks", ds_list_create());
+        tilemap[_tx / tile_size, _ty / tile_size] = _tile_data;
+        
+        scrP2WallCreateBlocks(_walls[i], top_tiles[i], block_thickness, _tile_data[?"blocks"]);
+        
+        instance_create(_tx, _ty, oP2TileArea);
+    }
+}
+
+shuffle_objects = array(oP2SpikeUp, oP2SpikeDown, oP2SpikeRight, oP2SpikeLeft);
+for (var i = 0, n = array_length_1d(shuffle_objects); i < n; i++)
+    with (shuffle_objects[i])
+        image_index = irandom(image_number - 1);
+
+randomize();
+
+#event other_room_end
+instance_destroy();

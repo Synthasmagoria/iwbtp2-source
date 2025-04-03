@@ -1,0 +1,15 @@
+// 2024-06-24 12:48:50
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprPlayerStart;
+visible = false;
+uses_physics = false;
+
+#event other_room_start
+if (!instance_exists(objPlayer))
+{
+    instance_create(x+17,y+23,objPlayer);
+    var _world = instance_find(oP2World, 0);
+    if (_world != noone && _world.data_initialized)
+        scrSaveGame(true);
+}

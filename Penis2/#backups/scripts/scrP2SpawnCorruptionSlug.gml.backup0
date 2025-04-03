@@ -1,0 +1,12 @@
+// 2024-06-27 16:58:04
+/// scrP2SpawnCorruptionSlug(xx, yy, xdir, ydir, pos_wrap, obj)
+#args xx, yy, xdir, ydir, pos_wrap, obj
+
+var _slug = instance_create(xx, yy, obj);
+_slug.movement_pattern_x = array(xdir, xdir, xdir);
+_slug.movement_pattern_y = array(0, 0, ydir);
+_slug.roomwrap = pos_wrap;
+
+with (_slug) {
+    event_user(0);
+}

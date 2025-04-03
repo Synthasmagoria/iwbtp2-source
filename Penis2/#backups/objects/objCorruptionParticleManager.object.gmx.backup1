@@ -1,0 +1,66 @@
+// 2023-11-21 20:28:01
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+corruption_interval = (1/50) * 2;
+corruption_timer = 0;
+
+tileset = tPenis2Background;
+tileset_width = -1;
+tileset_index_number = -1;
+tile_depth = 2000001;
+tile_size = 24;
+
+#event other_room_start
+tileset_width = floor(background_get_width(tileset) / tile_size);
+tileset_index_number = (background_get_width(tileset) / tile_size) * (background_get_height(tileset) / tile_size);
+
+#event step_begin
+
+show_debug_message(tile_get_count())
+
+with (objCorruptionParticle)
+{
+    var
+    _tx_prev = floor(xprev / tile_size),
+    _ty_prev = floor(yprev / tile_size);
+    
+    show_debug_message(string(x) + ", " +
+        string(y) + "       " +
+        string(xprev) + ", " + string(yprev));
+    
+    if (floor(x / tile_size) != _tx_prev || floor(y / tile_size) != _ty_prev)
+    {
+        var _t = tile_layer_find(other.tile_depth, xprev, yprev);
+        
+        if (_t != -1)
+        {
+            tile_delete(_t);
+        }
+        
+        tile_add(
+            other.tileset,
+            tile_get_left(tile),
+            tile_get_top(tile),
+            tile_size,
+            tile_size,
+            _tx_prev * tile_size,
+            _ty_prev * tile_size,
+            other.tile_depth);
+    }
+    
+    var _ti =
+        tile_get_left(tile) / tile_size +
+        floor(tile_get_top(tile) / tile_size) * other.tileset_width;
+    
+    _ti = (_ti + 4) % other.tileset_index_number;
+    
+    tile_set_region(
+        tile,
+        (_ti % other.tileset_width) * tile_size,
+        floor(_ti / other.tileset_width) * tile_size,
+        tile_size, 
+        tile_size);
+}

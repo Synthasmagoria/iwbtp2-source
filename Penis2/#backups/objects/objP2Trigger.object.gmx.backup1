@@ -1,0 +1,33 @@
+// 2024-05-20 10:53:49
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprTriggerMask;
+uses_physics = false;
+visible = false;
+
+#event create
+callback_enter = -1;
+callback_exit = -1;
+touching = false;
+once = true;
+disabled = false;
+
+#event step
+if (disabled) {
+    exit;
+}
+
+var _touching_prev = touching;
+touching = place_meeting(x, y, objPlayer);
+if (!_touching_prev && touching) {
+    if (script_exists(callback_enter)) {
+        script_execute(callback_enter);
+    }
+} else if (_touching_prev && !touching) {
+    if (script_exists(callback_exit)) {
+        script_execute(callback_exit);
+    }
+    if (once) {
+        disabled = true;
+    }
+}

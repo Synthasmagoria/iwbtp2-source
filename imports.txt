@@ -1,0 +1,294 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
+@@@@@@ rP2Intro01:
+
+*** AT DEPTH -100:
+
+- oP2WorldBorder:
+	- CREATE
+	- inherits from a template shader obj (sets uniform ticktimer)
+		- transfers time vars
+			- t_inc = 1 / framerate;
+		- sample uniforms
+	- uses famous gms2 `function` meme
+	- checks for the glasses item:
+		- destroy self if you dont have it
+		
+	- STEP
+	- inherited: time inc
+	- vars:
+		- player id
+		- view_xview, yview, h, w
+		- calculations for upper/lower border
+	- if checks for if the kid exists + is near upper/lower border
+		- create transition object if yes
+		- transition object's spd/dir same as player's
+		- destroy player
+		- sounds, kills bgm
+		- changes shader's uniforms with EaseInOutQuad (reach, color_change and value_clip)
+		- unclear what the TWEEN_EVs do (!!!)
+	
+	- DRAW
+	- avoids draw event from parent
+	
+	- DRAW END
+	- collects backbuffer from appsurf (for shader sampler2D)
+	- shader shit happens here
+	
+	- ROOM START
+	- x, y = xview, yview;
+	- w, h = wview, hview;
+	
+- oLight and manager
+	- similar method as in my previous projects
+
+- oCherryRedBounceBleak
+	- same as bounce cherry
+
+- oP2GravitySetter:
+	- CC: grav = fps_adjust_2(0.4); NOTE: 0.4 is default pgrav in fangames
+	
+	- CREATE
+	- sets grav default to grav = fps_adjust_2(0.1);
+	
+	- COLLISION oPlayer
+	- sets player's grav to id.grav
+	
+*** AT LAYER 100
+
+- oSpikes
+	- same, except for random image_index meme (@oTileblockerShuffle)
+
+- oWarpOutside:
+	- CREATE
+	- sets usual warp vars
+	- warp_xy offsets
+	- room origin, along with room_w/h previous
+	
+	- STEP
+	- bools to check whether the player has left the room
+		- if yes:
+			room_goto(roomTo);
+			persistent = true;
+	
+	- ROOM START
+	- checks if persistent first, then:
+		- 
+		
+	^^^ honestly all of this is identical to objOutsideRoomChanger,
+	but probably smoother
+	
+- oSign:
+	- CREATE
+	- init vars
+	- advance_phase function
+		- phase = states of the textbox ui
+			- 0 = player frozen, play sfx
+			- 1 = once sfx is done (using length/time), create seperate textbox object, the entire shebang happens here
+			- 2 = deletes textbox
+		- time = 0; //reset timer
+	
+	- STEP
+	- ^ do allat
+	- time += 1 / room_speed;
+	- touching player bool
+	
+	- DRAW GUI
+	- draws up arrow if touching, but not reading
+	
+	- ROOM START
+	- if theres a sfx, get the length of it in seconds
+
+- oTileblockerShuffle:
+	- CREATE
+	- init vars
+	
+	- ROOM START
+	- user_event(0);
+	
+	- USER EVENT 0
+	- gets tilemap properties such as:
+		- width, height, tilecell_w, tilecell_h
+	- sets random seed for the following vfx:
+		- overriding tiles in the room with random tiles in the tilemap row (?)
+		- shuffles spikes' image_index
+	- for loops for the x,y tile coords, place blocks over every tile, depth 0
+
+*** AT LAYER 200:
+
+- oP2Background:
+	- CREATE
+	- inherits shader template vars
+	- uses shP2Dither
+	- inits a bunch of arrays
+	- gpu_set_texrepeat(true) = texture_set_repeat(true);
+	- 9 possible levels
+	
+	- STEP
+	- override parent's code
+	
+	- END STEP
+	- time += time inc different each level * 1 / room_speed;
+	- level = level set on CC + floor(xview / wview) + floor(yview / hview);
+	- x,y to xyviews
+	- bg visibility determined by player's contact with the bg (?)
+	
+	- DRAW
+	- draw shader on bg sprite
+	
+	- ROOM START
+	- start_level init to level set on CC
+	- creates the object for the worm tile effect
+		- likelihood factor increases with level increase (slug_likelihood in create as an array)
+		
+*** AT LAYER 300
+
+- Background
+	- set to rgb(25, 25, 25)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
+@@@@@@ rP2Intro02
+
+*** AT LAYER 0:
+
+- light & manager
+
+*** AT LAYER 100:
+
+- oTileblockerShuffle
+- oSpikes
+- oWarpOutside
+- oSave:
+	- not different from normal engine
+	
+- oPushOutBlock2:
+	- starts with blocks active, while oPushOutBlock1 starts inactive
+	- Parent: oPushOutBlock1, where code lies
+		- CREATE
+		- vars
+		- sets sprite
+		- function with parameter whether to start with blocks active or not:
+			- if blocks active:
+				- create a block object with width and height same as id
+				- if player is inside the box, refresh djump, do some math with bboxes to appear on opposite side that the player is facing
+			- if blocks arent active:
+				- destroy preexisting blocks spawned if existing
+				- reset block var to noone
+		
+		- END STEP
+		- countdown stuff
+		- once countdown reaches 0, call function with !parameter, reset countdown
+		
+		- DRAW
+		- create grid of sprites to fill box
+
+TILES at depth 200
+oP2Background at depth 300
+BG rgb (25,25,25)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
+@@@@@@ rP2Intro03
+
+nothing to note, every object at same layers mentioned previously
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
+@@@@@@ rP2Intro04
+
+*** AT LAYER 0:
+
+- pushout blocks
+- one spike at the very top right
+- light sys
+
+*** LAYER 100:
+
+- tile shufla
+- rest of spikes
+- save
+- warps
+- one block @bl
+
+*** LAYER 200:
+
+- tiles from tileset tPenis2, layer name Tiles_1
+- does NOT spawn a block over them
+
+*** LAYER 300:
+
+- tiles from tileset tTileset, layer name Tiles
+- these are the tiles that get the blocks spawned on top of them given oTileblockerShuffle
+
+*** LAYER 400: oP2Background
+
+*** LAYER 500: BG RGB(25,25,25)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
+@@@@@@rP2Intro05
+
+*** LAYER 0:
+
+- NEW oPushOutBlock1/2Fast:
+	- *0.5 interval var = fastar
+
+- light sys
+
+*** LAYER 100: tiles
+
+*** LAYER 200: normal business
+
+*** LAYER 300: oP2Background
+
+*** LAYER 400: BG RGB(25,25,25)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
+@@@@@@rP2Intro06
+
+*** LAYER 0:
+
+- NEW oPushOutBlock1/2Faster:
+	- *0.225 interval var = omega fastar
+	
+- oSpawnerRandom - ALL SPAWNS THE WORM TILES (oCorruptionSlug_P2Intro06) @CC:
+	- CREATE
+	- vars with comments, hell ye
+	
+	- STEP
+	- time increasing at 1*framerate;
+	- spawner with a rate of 1 spawn per 50f
+	
+	- ROOM START
+	- event_user(0)
+	- event_user(1) if ahead > 1
+	
+	- EVENT USER 0
+	- adjusts value so for fps setting
+	- offsets timer once for randomness
+	
+	- EVENT USER 1
+	- i assume this predicts the position of a spawned object in "ahead" frames in the future (?) and spawns it
+	- ^ if so that is really sick
+	
+- light sys
+
+*** OTHER LAYERS IDENTICAL TO PREV ROOM
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=
+@@@@@@rP2Intro07
+
+*** LAYER 0:
+
+- some spikes, cant tell yet why theyre layer 0
+- pushout blocks
+- light sys
+
+*** LAYER 100: tiles
+
+*** LAYER 200: normal business
+
+*** LAYER 300:
+
+- oP2Background
+
+- oCameraSnap:
+	- STEP
+	- if player exists and is active, snap to nearest 800, 608 multiple
+	- so far seems identical to objCamera from gms1
+	
+	- oCameraParent:
+		looks like a more versatile camera system, will make sure to look in depth if used in a wilder way
+		
+*** LAYER 400: BG RGB(25,25,25)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=

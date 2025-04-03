@@ -1,0 +1,20 @@
+// 2024-04-29 16:34:59
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprP2Between_Background;
+uses_physics = false;
+
+#event create
+if (live_call()) return live_result;
+instance_set_width(id, view_wview[0]);
+instance_set_height(id, view_hview[0]);
+image_speed = 1/4;
+
+#event step
+x = view_xview[0];
+y = view_yview[0];
+
+#event draw
+if (live_call()) return live_result;
+draw_sprite_tiled_ext(sprP2Between_Lines, image_index % 2, x, y, 1, 1, image_blend, image_alpha * 0.5);
+draw_sprite_tiled_ext(sprite_index, image_index, x, y, 1, 1, image_blend, image_alpha * 0.5);

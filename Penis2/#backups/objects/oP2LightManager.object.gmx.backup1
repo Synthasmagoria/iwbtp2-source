@@ -1,0 +1,59 @@
+// 2024-04-29 16:37:00
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+surf = -1;
+resolution = 0.5;
+image_alpha = 0.2;
+
+#event destroy
+if (surface_exists(surf))
+    surface_free(surf);
+
+#event other_room_end
+instance_destroy();
+
+#event draw
+
+if (!surface_exists(surf))
+{
+    surf = surface_create(
+        view_wview * resolution,
+        view_hview * resolution);
+}
+
+surface_set_target(surf);
+draw_clear_alpha(c_black, 1.0);
+
+var
+_cx = view_xview,
+_cy = view_yview;
+
+draw_set_blend_mode(bm_subtract);
+with (oP2Light)
+{
+    draw_sprite_ext(
+        sprite_index,
+        image_index,
+        (x - _cx) * other.resolution,
+        (y - _cy) * other.resolution,
+        other.resolution * image_xscale,
+        other.resolution * image_yscale,
+        image_angle,
+        image_blend,
+        image_alpha);
+}
+draw_set_blend_mode(bm_normal);
+
+surface_reset_target();
+draw_surface_ext(
+    surf,
+    _cx,
+    _cy,
+    1.0 / resolution,
+    1.0 / resolution,
+    image_angle,
+    image_blend,
+    image_alpha);

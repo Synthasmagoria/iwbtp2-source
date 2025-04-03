@@ -1,0 +1,9 @@
+// 2023-12-16 15:36:42
+/// scrP2RoomGoto(r)
+#args r
+var _p2_room = global.__p2_rooms[?room_get_name(r)];
+if (_p2_room == -1 || _p2_room == undefined) {
+    room_goto(r);
+} else {
+    room_goto(_p2_room);
+}

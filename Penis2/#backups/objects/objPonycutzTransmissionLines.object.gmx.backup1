@@ -1,0 +1,71 @@
+// 2023-12-04 20:31:51
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprTriggerMask;
+uses_physics = false;
+
+#event create
+depth = -1000;
+
+sh = shP2Skyline;
+time = 0;
+amplitude = 0.3; // 0.8
+offset = -310.0;
+opacity_add = 0.0; // 0.0 - 1.7
+saturation = 0.0; // 0.75
+glow_opacity = 0.05; // 0.1 - 0.2
+hue_range_start = random(1);
+hue_range_add = random_range(0.15, 0.35);
+
+// sorry this is garbage programming but idc lol
+music_transitioning_prev = false;
+saturation_prev = 0.0;
+hue_tween_1 = -1;
+hue_tween_2 = -1;
+
+#event step
+var _change_color = false;
+
+with (objPonycutzGrave)
+{
+    other.opacity_add = lerp(0.0, 1.7, volume);
+    other.saturation = lerp(0.0, 1, volume);
+    other.amplitude = lerp(0.3, 0.8, volume);
+    other.glow_opacity = lerp(0.05, 0.2, volume);
+    
+    _change_color |= (!other.music_transitioning_prev && transitioning);
+    other.music_transitioning_prev = transitioning;
+}
+
+_change_color |= (saturation == 0.0 && saturation != saturation_prev);
+saturation_prev = saturation;
+
+if (_change_color) {
+    if (TweenExists(hue_tween_1))
+        TweenDestroySafe(hue_tween_1);
+    if (TweenExists(hue_tween_2))
+        TweenDestroySafe(hue_tween_2);
+    
+    hue_tween_1 = TweenFire(other.id, EaseInOutCirc, TWEEN_MODE_ONCE, true, 0.0, 3.0, "hue_range_start", hue_range_start, random(1));
+    hue_tween_2 = TweenFire(other.id, EaseInOutCirc, TWEEN_MODE_ONCE, true, 0.0, 3.0, "hue_range_add", hue_range_add, random_range(0.15, 0.35));
+}
+
+time += 1.0/50.0;
+x = view_xview[0];
+y = view_yview[0];
+
+#event other_room_start
+instance_set_width(id, view_wview[0]);
+instance_set_height(id, view_hview[0]);
+
+#event draw
+shader_set(sh);
+shader_set_uniform_f(shader_get_uniform(sh, "amplitude"), amplitude);
+shader_set_uniform_f(shader_get_uniform(sh, "offset"), offset);
+shader_set_uniform_f(shader_get_uniform(sh, "time"), time);
+shader_set_uniform_f(shader_get_uniform(sh, "opacity_add"), opacity_add);
+shader_set_uniform_f(shader_get_uniform(sh, "saturation"), saturation);
+shader_set_uniform_f(shader_get_uniform(sh, "hue_range"), hue_range_start, hue_range_add);
+shader_set_uniform_f(shader_get_uniform(sh, "glow_opacity"), glow_opacity);
+draw_self();
+shader_reset();

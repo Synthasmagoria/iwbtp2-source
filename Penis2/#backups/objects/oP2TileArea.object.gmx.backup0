@@ -1,0 +1,6 @@
+// 2023-12-17 15:25:32
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprBlock;
+visible = false;
+uses_physics = false;

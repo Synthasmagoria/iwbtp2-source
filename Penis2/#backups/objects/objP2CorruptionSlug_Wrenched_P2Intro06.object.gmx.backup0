@@ -1,0 +1,15 @@
+// 2023-12-18 19:51:24
+#event properties (no comments/etc. here are saved)
+parent_index = objP2CorruptionSlug_Wrenched;
+uses_physics = false;
+
+#event create
+event_inherited();
+
+movement_pattern_x = array(1, 1, 1);
+movement_pattern_y = array(0, -1, 0);
+
+corruption_length = 4;
+roomwrap = false;
+
+event_user(0);

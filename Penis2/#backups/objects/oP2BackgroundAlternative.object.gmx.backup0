@@ -1,0 +1,38 @@
+// 2024-05-26 21:08:11
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+sprite_index = sP2BgAlt;
+
+#event create
+sh = shP2Webs;
+time = 0;
+instance_set_width(id, view_wview[0]);
+instance_set_height(id, view_hview[0]);
+uv = sprite_get_uvs(sprite_index, 0);
+tex = sprite_get_texture(sP2BgAltTexture, 0);
+tex_uv = sprite_get_uvs(sP2BgAltTexture, 0);
+image_blend = make_color_hsv(180, 240, 80);
+depth = 2000001;
+image_speed = 0;
+
+#event other_room_start
+event_user(0);
+
+#event other_room_end
+instance_destroy(); 
+
+#event step
+x = view_xview[0];
+y = view_yview[0];
+
+#event draw
+time += (1/room_speed);
+
+shader_set(sh);
+shader_set_uniform_f(shader_get_uniform(sh, "time"), time);
+texture_set_stage(shader_get_sampler_index(sh, "tex"), tex);
+shader_set_uniform_f(shader_get_uniform(sh, "tex_uv"), tex_uv[0], tex_uv[1], tex_uv[2], tex_uv[3]);
+shader_set_uniform_f(shader_get_uniform(sh, "uv"), uv[0], uv[1], uv[2], uv[3]);
+draw_self();
+shader_reset();

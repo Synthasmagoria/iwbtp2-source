@@ -1,0 +1,155 @@
+// 2024-07-06 18:04:13
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+enum P2_TILE_TYPE {
+    NOTHING,
+    FILLING,
+    BLOCK,
+    VERTICAL,
+    HORIZONTAL
+}
+
+enum P2_DIRECTION {
+    RIGHT,
+    UP, 
+    LEFT,
+    DOWN
+}
+
+enum P2_WALLS {NONE, R, U, RU, L, RL, UL, RUL, D, RD, UD, RUD, LD, RLD, ULD, RULD}
+
+non_corrupted_room_tiles = ds_list_create();
+
+simple_tiles_only = false;
+outside_tiles_left = true;
+outside_tiles_right = true;
+outside_tiles_top = true;
+outside_tiles_bottom = true;
+
+pipes_tile_depth = 1100000;
+tileset = tPenis2Tileset;
+tile_depth = 1000000;
+tileset_width = background_get_width(tileset) / global.__p2_tile_size;
+tile_alpha = 1;
+
+#event step
+var _touching_tile_area = false;
+with (objPlayer)
+    _touching_tile_area = place_meeting(x, y, oP2TileArea);
+
+tile_alpha = clamp(
+    tile_alpha + sign((1.0 - _touching_tile_area) - 0.5) * 0.02 * int_get_bit(global.p2Item, P2_ITEM.WRENCH),
+    0.0,
+    1.0);
+
+var _td;
+for (var i = 0, n = ds_list_size(non_corrupted_room_tiles); i < n; i++) {
+    _td = non_corrupted_room_tiles[|i];
+    tile_set_alpha(_td[?"tile"], tile_alpha);
+}
+
+#event other_room_start
+var
+_world = instance_find(oP2World, 0),
+_pipe_47_tileset = _world.pipe_47_tileset,
+_td, _tx, _ty;
+if (int_get_bit(global.saveP2Item, P2_ITEM.WRENCH)) {
+    with (oP2CorruptionSetter) {
+        _tx = floor(x / global.__p2_tile_size);
+        _ty = floor(y / global.__p2_tile_size);
+        if (scrP2TilemapPositionInRoom(_tx, _ty)) {
+            scrP2TilemapTileCorruptInRoom(_tx, _ty);
+        }
+    }
+}
+
+ds_list_clear(non_corrupted_room_tiles);
+
+if (!simple_tiles_only) {
+    for (var i = 0, n = scrP2TilemapNumber(room); i < n; i++) {
+        _td = scrP2TilemapRoomGetFromIndex(i);
+        scrP2TileblockerInternal_TileAddFromTiledataAt(_td, _td[?"tile_x"], _td[?"tile_y"], _pipe_47_tileset);
+        instance_create(_td[?"tile_x"], _td[?"tile_y"], oP2TileArea);
+        if (!_td[?"corruption"]) {
+            ds_list_add(non_corrupted_room_tiles, _td);
+        }
+    }
+} else {
+    for (var i = 0, n = scrP2TilemapNumber(room); i < n; i++) {
+        _td = scrP2TilemapRoomGetFromIndex(i);
+        scrP2TileblockerInternal_TileAddFromTiledataAt_TileOnly(_td, _td[?"tile_x"], _td[?"tile_y"], _pipe_47_tileset);
+    }
+}
+
+var _touching_tile_area = false;
+with (objPlayer) {
+    _touching_tile_area = place_meeting(x, y, oP2TileArea);
+}
+if (_touching_tile_area) {
+    tile_alpha = 0.0;
+}
+
+var
+_tx2 = room_width / global.__p2_tile_size,
+_ty2 = room_height / global.__p2_tile_size;
+
+if (outside_tiles_top) {
+    for (var _tx = 0; _tx < _tx2; _tx++) {
+        _td = scrP2TilemapGetInRoom(_tx, -1);
+        if (_td != -1) {
+            scrP2TileblockerInternal_TileAddFromTiledataAt(_td, _tx * global.__p2_tile_size, -global.__p2_tile_size, _pipe_47_tileset);
+        }
+    }
+}
+if (outside_tiles_bottom) {
+    for (var _tx = 0; _tx < _tx2; _tx++) {
+        _td = scrP2TilemapGetInRoom(_tx, _ty2);
+        if (_td != -1) {
+            scrP2TileblockerInternal_TileAddFromTiledataAt(_td, _tx * global.__p2_tile_size, _ty2 * global.__p2_tile_size, _pipe_47_tileset);
+        }
+    }
+}
+if (outside_tiles_left) {
+    for (var _ty = 0; _ty < _ty2; _ty++) {
+        _td = scrP2TilemapGetInRoom(-1, _ty);
+        if (_td != -1) {
+            scrP2TileblockerInternal_TileAddFromTiledataAt(_td, -global.__p2_tile_size, _ty * global.__p2_tile_size, _pipe_47_tileset);
+        }
+    }
+}
+if (outside_tiles_right) {
+    for (var _ty = 0; _ty < _ty2; _ty++) {
+        _td = scrP2TilemapGetInRoom(_tx2, _ty);
+        if (_td != -1) {
+            scrP2TileblockerInternal_TileAddFromTiledataAt(_td, _tx2 * global.__p2_tile_size, _ty * global.__p2_tile_size, _pipe_47_tileset);
+        }
+    }
+}
+
+if (outside_tiles_top || outside_tiles_left) {
+    _td = scrP2TilemapGetInRoom(-1, -1);
+    if (_td != -1) {
+        scrP2TileblockerInternal_TileAddFromTiledataAt(_td, -global.__p2_tile_size, -global.__p2_tile_size, _pipe_47_tileset);
+    }
+}
+if (outside_tiles_left || outside_tiles_bottom) {
+    _td = scrP2TilemapGetInRoom(-1, _ty2);
+    if (_td != -1) {
+        scrP2TileblockerInternal_TileAddFromTiledataAt(_td, -global.__p2_tile_size, _ty2 * global.__p2_tile_size, _pipe_47_tileset);
+    }
+}
+if (outside_tiles_bottom || outside_tiles_right) {
+    _td = scrP2TilemapGetInRoom(_tx2, _ty2);
+    if (_td != -1) {
+        scrP2TileblockerInternal_TileAddFromTiledataAt(_td, _tx2 * global.__p2_tile_size, _ty2 * global.__p2_tile_size, _pipe_47_tileset);
+    }
+}
+if (outside_tiles_right || outside_tiles_top) {
+    _td = scrP2TilemapGetInRoom(_tx2, -1);
+    if (_td != -1) {
+        scrP2TileblockerInternal_TileAddFromTiledataAt(_td, _tx2 * global.__p2_tile_size, -global.__p2_tile_size, _pipe_47_tileset);
+    }
+}

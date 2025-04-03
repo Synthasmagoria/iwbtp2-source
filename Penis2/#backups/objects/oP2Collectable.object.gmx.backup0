@@ -1,0 +1,57 @@
+// 2024-05-20 13:49:54
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+sprite_index = sprSecretItem;
+uses_physics = false;
+
+#event create
+sh = shP2RainbowOutline;
+text = "";
+time = 0;
+outline_speed = 0.5;
+frequency = 1.0;
+index = 0;
+texture = -1;
+textbox_callback_scripts = ds_list_create();
+textbox_callback_script_lines = ds_list_create();
+
+#event destroy
+ds_list_destroy(textbox_callback_scripts);
+ds_list_destroy(textbox_callback_script_lines);
+
+#event collision:objPlayer
+audio_play_sound(sndP2Item,0,false);
+global.p2Item = int_truth_bit(global.p2Item, index);
+
+other.frozen = true;
+ds_list_add(textbox_callback_script_lines, 9999);
+ds_list_add(textbox_callback_scripts, scrP2UnfreezePlayer);
+
+scrP2TextboxCreate(text, -1, -1, 1, textbox_callback_scripts, textbox_callback_script_lines);
+
+with (oP2Inventory) {
+    event_user(0);
+}
+
+instance_destroy();
+
+#event other_room_start|item check
+event_user(0);
+
+#event other_room_end
+instance_destroy();
+
+#event other_user0 initialize
+texture = sprite_get_texture(sprite_index, 0);
+if (int_get_bit(global.p2Item, index))
+    instance_destroy();
+
+#event draw
+time += (1/50);
+shader_set(sh);
+shader_set_uniform_f(shader_get_uniform(sh, "time"), time);
+shader_set_uniform_f(shader_get_uniform(sh, "speed"), outline_speed);
+shader_set_uniform_f(shader_get_uniform(sh, "frequency"), frequency);
+shader_set_uniform_f(shader_get_uniform(sh, "pixel_size"), texture_get_texel_width(texture), texture_get_texel_height(texture));
+draw_self();
+shader_reset();

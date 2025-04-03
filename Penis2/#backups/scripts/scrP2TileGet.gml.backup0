@@ -1,0 +1,7 @@
+// 2023-12-17 12:34:20
+/// scrP2TileGet(xx, yy)->real
+#args xx, yy
+with (oP2TileblockerShuffle)
+    if (point_in_rectangle(xx, yy, 0, 0, tilemap_width - 1, tilemap_height - 1))
+        return tilemap[xx, yy];
+return -1;

@@ -1,0 +1,17 @@
+// 2024-06-17 17:38:57
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+TweenMore(
+    TweenFire(id, EaseLinear, 0, true, 2.0, 6.0, "image_alpha", 1.0, 0.0),
+    id, EaseLinear, 0, true, 14.0, 6.0, "image_alpha", 0.0, 1.0);
+depth = -2000000;
+
+#event draw_end
+draw_set_color(c_black);
+draw_set_alpha(image_alpha);
+draw_rectangle(0, 0, 800, 608, false);
+draw_set_alpha(1.0);
+draw_set_color(c_white);

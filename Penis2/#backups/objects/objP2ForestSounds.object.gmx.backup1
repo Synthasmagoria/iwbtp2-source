@@ -1,0 +1,42 @@
+// 2024-06-17 15:35:16
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+distance_measurer = instance_find(objP2ForestDistanceMeasurement, 0);
+birds_sound = musP2ForestBirds;
+birds_distant_sound = musP2ForestBirds_Paulstretched;
+static_sound = sndP2VinylDust_Soft;
+static_far_sound = sndP2VinylDust_Hard;
+
+birds_sound_inst = audio_play_sound(birds_sound, 0, true);
+audio_sound_set_track_position(birds_sound_inst, audio_sound_length(birds_sound_inst));
+
+birds_distant_sound_inst = audio_play_sound(birds_distant_sound, 0, true);
+audio_sound_set_track_position(birds_distant_sound_inst, audio_sound_length(birds_distant_sound));
+audio_sound_gain(birds_distant_sound_inst, 0, 0);
+
+static_sound_inst = audio_play_sound(static_sound, 0, true);
+audio_sound_set_track_position(static_sound_inst, audio_sound_length(static_sound_inst));
+audio_sound_gain(static_sound_inst, 0, 0);
+
+static_far_sound_inst = audio_play_sound(static_far_sound, 0, true);
+audio_sound_set_track_position(static_far_sound_inst, audio_sound_length(static_far_sound_inst));
+audio_sound_gain(static_far_sound_inst, 0, 0);
+
+#event step
+var _dist = distance_measurer.distance_from_middle;
+audio_sound_gain(birds_sound_inst, clamp(invlerp(4000, 900, _dist), 0, 1), 0);
+audio_sound_gain(birds_distant_sound_inst, clamp(invlerp(900, 8000, _dist), 0, 1), 0);
+audio_sound_gain(static_sound_inst, clamp(invlerp(600, 2000, _dist), 0, 1), 0);
+audio_sound_gain(static_far_sound_inst, clamp(invlerp(2000, 8000, _dist), 0, 1), 0);
+
+#event other_room_end
+instance_destroy();
+
+#event destroy
+audio_stop_sound(birds_sound_inst);
+audio_stop_sound(birds_distant_sound_inst);
+audio_stop_sound(static_sound_inst);
+audio_stop_sound(static_far_sound_inst);

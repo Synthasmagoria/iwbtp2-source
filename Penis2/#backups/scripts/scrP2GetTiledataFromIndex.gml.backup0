@@ -1,0 +1,4 @@
+// 2024-06-19 15:43:47
+/// scrP2GetTiledataFromIndex->ds_map
+gml_pragma("forceinline");
+return ds_list_find_value(ds_map_find_value(global.__p2_room_tiles, room_get_name(room)), argument0);

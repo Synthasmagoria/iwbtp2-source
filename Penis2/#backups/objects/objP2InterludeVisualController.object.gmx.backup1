@@ -1,0 +1,77 @@
+// 2024-06-27 15:39:35
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+
+#event create
+depth = 0;
+
+instance_create(0, 0, objP2StaticOverlay);
+instance_create(0, 0, objP2InterludeVoid);
+instance_create(0, 0, objP2InterludeStarSpawner);
+
+building_shader = shP2ScrollRepeat;
+building_shader_pp = shP2InterludePostProcessing;
+building_shader_pp_time = 0;
+building_separation = 18;
+building_number = 8;
+building_first_y = 25;
+building_draw_y = 150;
+building_sin_distribution = 0.6;
+building_uvs = sprite_get_uvs(object_get_sprite(objP2City), 0);
+building_wobble = 20;
+building_instances = array_create(building_number);
+building_surface = -1;
+
+var _inst, _t;
+for (var i = 0; i < building_number; i++) {
+    _inst = instance_create(room_width / 2, building_first_y + building_separation * i, objP2City);
+    var _color_value = 255 - (255 / building_number) * (i + 1);
+    _inst.image_xscale = sign((i % 2) - 0.5);
+    _inst.image_blend = make_color_rgb(_color_value, _color_value, _color_value);
+    _inst.scroll_x = random(1);
+    
+    var _t = TweenFire(_inst, EaseInOutSine, TWEEN_MODE_PATROL, true, 0.0, 1.0, "y", _inst.y, _inst.y - building_wobble);
+    TweenStep(_t, (i / building_number) * 200 * building_sin_distribution);
+    _inst.tween = _t;
+    
+    building_instances[i] = _inst;
+}
+
+#event destroy
+if (surface_exists(building_surface))
+    surface_free(building_surface);
+global.gameStarted = true;
+
+#event other_room_end
+instance_destroy();
+
+#event draw
+if (!surface_exists(building_surface)) {
+    building_surface = surface_create(800, 400);
+}
+
+surface_set_target(building_surface);
+draw_clear_alpha(0.0, c_black);
+shader_set(building_shader);
+var _scroll_uniform = shader_get_uniform(building_shader, "scroll");
+shader_set_uniform_f(shader_get_uniform(building_shader, "tl"), building_uvs[0], building_uvs[1]);
+shader_set_uniform_f(shader_get_uniform(building_shader, "br"), building_uvs[2], building_uvs[3]);
+for (var i = 0; i < building_number; i++) {
+    shader_set_uniform_f(_scroll_uniform, building_instances[i].scroll_x, 0.0);
+    with (building_instances[i])
+        draw_self();
+}
+shader_reset();
+surface_reset_target();
+
+draw_set_color(c_black);
+draw_rectangle(0, room_height / 2, room_width, room_height, false);
+draw_set_color(c_white);
+
+building_shader_pp_time += 1/50;
+shader_set(building_shader_pp);
+shader_set_uniform_f(shader_get_uniform(building_shader_pp, "time"), building_shader_pp_time);
+shader_set_uniform_f(shader_get_uniform(building_shader_pp, "px"), 1/800, 1/608);
+draw_surface(building_surface, 0, building_draw_y);
+shader_reset();

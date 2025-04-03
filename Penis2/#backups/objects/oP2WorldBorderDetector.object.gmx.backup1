@@ -1,0 +1,37 @@
+// 2024-01-31 18:06:57
+#event properties (no comments/etc. here are saved)
+parent_index = oP2Collectable;
+sprite_index = sP2WorldBorderDetectorShine;
+uses_physics = false;
+
+#event create|tween init
+event_inherited();
+
+index = P2_ITEM.WORLD_BORDER_DETECTOR;
+text = "World border detector collected";
+
+light = instance_create(x, y, oP2Light);
+light.image_alpha = 1.0;
+TweenFire(light, EaseInOutCubic, TWEEN_MODE_PATROL, true, 0.0, 2.0, "image_xscale", 3.0, 4.0);
+TweenFire(light, EaseInOutCubic, TWEEN_MODE_PATROL, true, 0.0, 2.0, "image_yscale", 3.0, 4.0);
+
+glasses = sP2WorldBorderDetector;
+
+image_speed = 1/5;
+
+shine_alpha = 1.0;
+shine_duration = 1.0;
+shine_interval_min = 2.0;
+shine_interval_max = 4.0;
+alarm[0] = random_range(shine_interval_min, shine_interval_max) * room_speed;
+
+#event destroy
+instance_destroy(light);
+
+#event alarm0
+TweenFire(id, EaseInOutCubic, TWEEN_MODE_BOUNCE, true, 0.0, shine_duration, "shine_alpha", 0.0, 1.0);
+alarm[0] = random_range(shine_interval_min, shine_interval_max) * room_speed;
+
+#event draw
+draw_sprite_ext(glasses, 0, x, y, image_xscale, image_yscale, image_angle, image_blend, image_alpha);
+draw_sprite_ext(sprite_index, image_index, x, y, image_xscale, image_yscale, image_angle, image_blend, image_alpha * shine_alpha);

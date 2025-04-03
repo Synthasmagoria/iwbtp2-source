@@ -1,0 +1,6 @@
+// 2024-06-23 14:28:14
+/// scrP2PushOutBlockQueueEffect
+#args inst_id
+with (objP2PushOutBlockManager) {
+    collision_block = inst_id;
+}

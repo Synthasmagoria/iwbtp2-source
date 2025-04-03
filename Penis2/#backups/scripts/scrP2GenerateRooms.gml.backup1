@@ -1,0 +1,40 @@
+// 2023-12-16 20:44:31
+/// scrP2GenerateRooms
+scrP2DestroyRooms();
+
+global.__p2_original_room_list = ds_list_create();
+// TODO: Add remaining rooms
+ds_list_add(global.__p2_original_room_list, rP2Intro01, rP2Intro02, rP2Intro03);
+//ds_list_add(global.__p2_original_room_list, rP2Intro01, rP2Intro02, rP2Intro03, rP2Intro04, rP2Intro05, rP2Intro06, rP2Intro07, rP2Intro08);
+
+// TODO: Make sure that there is no memory leak when reinitializing p2
+//if (file_exists("p2_temp")) {
+//    var _f = file_text_open_read("p2_temp");
+//    global.__p2_generated_rooms = json_decode(file_text_read_string(_f));
+//    file_text_close(_f);
+//    file_delete("p2_temp");
+//    print(current_time);
+//}
+
+if (!ds_exists(global.__p2_generated_rooms, ds_type_map))
+    global.__p2_generated_rooms = ds_map_create();
+global.__p2_generated_rooms[?room_get_name(global.__p2_original_room_list[|0])] = room34;
+global.__p2_generated_rooms[?room_get_name(global.__p2_original_room_list[|1])] = room35;
+global.__p2_generated_rooms[?room_get_name(global.__p2_original_room_list[|2])] = room36;
+global.__p2_original_rooms = ds_map_create();
+
+var _generated_room, _original_room;
+for (var i = 0, n = ds_list_size(global.__p2_original_room_list); i < n; i++) {
+    _original_room = global.__p2_original_room_list[|i];
+    _generated_room = global.__p2_generated_rooms[?room_get_name(_original_room)];
+    
+    if (_generated_room == undefined) {
+        _generated_room = room_duplicate(global.__p2_original_room_list[|i]);
+        ds_map_add(global.__p2_generated_rooms, room_get_name(_original_room), _generated_room);
+    } else {
+        //print(room_get_name(_original_room) + ", " + room_get_name(_generated_room));
+        room_assign(_original_room, _generated_room);
+    }
+    
+    ds_map_add(global.__p2_original_rooms, room_get_name(_generated_room), _original_room);
+}

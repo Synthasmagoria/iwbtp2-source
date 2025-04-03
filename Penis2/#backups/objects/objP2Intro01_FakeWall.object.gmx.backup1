@@ -1,0 +1,12 @@
+// 2024-06-18 14:50:16
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+sprite_index = sprP2Intro01_FakeWall;
+
+#event create
+fade_speed = 0.02;
+depth = 1000000;
+
+#event step
+image_alpha = clamp(image_alpha + sign(place_meeting(x, y, objPlayer) - 0.5) * fade_speed * -1.0, 0, 1);

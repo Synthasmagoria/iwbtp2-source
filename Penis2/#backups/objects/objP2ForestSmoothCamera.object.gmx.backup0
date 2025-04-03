@@ -1,0 +1,48 @@
+// 2024-06-06 22:55:09
+#event properties (no comments/etc. here are saved)
+parent_index = -1;
+uses_physics = false;
+sprite_index = sprCamera;
+visible = false;
+
+#event create
+follow_factor = 0;
+xorigin = 0;
+yorigin = 0;
+smoothing = 4;
+view_x = 0;
+view_y = 0;
+
+view_enabled = true;
+view_visible[0] = true;
+view_xport[0] = 0;
+view_yport[0] = 0;
+view_wport[0] = 800;
+view_hport[0] = 608;
+view_wview[0] = 800;
+view_hview[0] = 608;
+
+with (objPlayer) {
+    view_xview[0] = floor(x / view_wview[0]) * view_wview[0];
+    view_yview[0] = floor(y / view_hview[0]) * view_hview[0];
+    other.x = x;
+    other.y = y;
+    view_x = other.x;
+    view_y = other.y;
+    break;
+}
+xorigin = view_xview[0];
+yorigin = view_yview[0];
+
+TweenFire(id, EaseInOutExpo, 0, true, 1.0, 8.0, "follow_factor", 0.0, 1.0);
+
+#event step_end
+with (objPlayer) {
+    other.x += (x - other.x) / other.smoothing;
+    other.y += (y - other.y) / other.smoothing;
+    other.view_x = lerp(other.xorigin, other.x - view_wview[0] / 2, other.follow_factor);
+    other.view_y = lerp(other.yorigin, other.y - view_hview[0] / 2, other.follow_factor);
+    view_xview[0] = round(other.view_x);
+    view_yview[0] = round(other.view_y);
+    break;
+}

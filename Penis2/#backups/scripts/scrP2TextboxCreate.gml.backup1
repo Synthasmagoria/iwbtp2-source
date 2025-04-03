@@ -1,0 +1,21 @@
+// 2024-05-04 18:00:31
+/// scrP2TextboxCreate(text, [portrait], [scripts], [script_lines])->inst
+#args text_arr,
+var textbox = instance_create(0, 0, oP2Textbox);
+with (textbox)
+{
+    text = text_arr;
+    text_lines = 3;
+    text_width = 324;
+    if (argument_count > 1) {
+        portrait_sprite = argument[1];
+    }
+    if (argument_count == 4) {
+        ds_list_copy(callback_scripts, argument[2]);
+        ds_list_copy(callback_script_lines, argument[3]);
+    }
+    event_user(1); //update_size
+    event_user(0); //reposition
+    event_user(2); //parse text
+}
+return textbox;
