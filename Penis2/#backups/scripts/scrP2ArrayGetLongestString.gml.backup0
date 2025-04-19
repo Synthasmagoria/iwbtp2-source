@@ -1,8 +1,0 @@
-// 2024-05-09 15:04:38
-/// scrP2ArrayGetLongestString
-#args arr
-var _len = 0;
-for (var i = 0, n = array_length_1d(arr); i < n; i++) {
-    _len = max(_len, string_width(arr[i]));
-}
-return _len;

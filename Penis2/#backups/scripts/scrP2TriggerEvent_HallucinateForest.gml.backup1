@@ -1,8 +1,0 @@
-// 2024-06-30 15:16:26
-/// scrP2TriggerEvent_HallucinateForest
-var _forest_generator = instance_create(0, 0, objP2ForestGenerator);
-_forest_generator.other_solids_tilemap_depth = 999999;
-_forest_generator.forest_tile_chance = 0.8;
-_forest_generator.forest_tree_chance = 0.25;
-_forest_generator.generation_duration = 30;
-_forest_generator.finished_callback = scrP2ForestGeneratorFinished_GotoHallucinationForest;

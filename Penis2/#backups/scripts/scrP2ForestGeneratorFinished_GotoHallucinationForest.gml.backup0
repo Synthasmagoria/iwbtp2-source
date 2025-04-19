@@ -1,4 +1,0 @@
-// 2024-06-30 16:06:06
-/// scrP2ForestGeneratorFinished_GotoHallucinationForest
-var _not_in_tile_area_monitor = instance_create(0, 0, objP2ForestGotoSafe);
-_not_in_tile_area_monitor.not_in_tile_area_callback = scrP2PlayerTileAreaMonitorEvent_GotoHallucinationForest;

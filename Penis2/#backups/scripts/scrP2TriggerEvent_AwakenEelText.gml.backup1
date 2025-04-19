@@ -1,3 +1,0 @@
-// 2024-05-20 10:32:45
-/// scrP2TriggerEvent_AwakenEelText
-scrP2TextboxCreate("The Eel has awakened", -1, -1, 1, array(scrP2UnfreezePlayer), array(9999));

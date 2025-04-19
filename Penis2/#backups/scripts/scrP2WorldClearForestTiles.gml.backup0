@@ -1,5 +1,0 @@
-// 2024-06-06 18:44:50
-/// scrP2WorldClearForestTiles
-with (oP2World) {
-    ds_list_clear(forest_tiles);
-}

@@ -1,7 +1,0 @@
-// 2024-05-11 17:16:48
-/// scrP2TravelerSpawn_NuclearPhysicistKid
-with (objP2Traveler) {
-    var _inst = instance_create(x, y - 16, oP2NuclearPhysicistSkin);
-    _inst.direction = 115;
-    _inst.speed = 8;
-}

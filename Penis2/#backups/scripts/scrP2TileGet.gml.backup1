@@ -1,7 +1,0 @@
-// 2023-12-10 21:37:57
-/// scrP2TileGet(xx, yy)
-#args xx, yy
-with (oP2TileblockerShuffleWrenched)
-    if (point_in_rectangle(xx, yy, 0, 0, tilemap_width - 1, tilemap_height - 1))
-        return tilemap[xx, yy];
-return -1;

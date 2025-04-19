@@ -1,4 +1,0 @@
-// 2024-05-09 15:53:02
-/// scrP2TextboxIsLastLine
-#args textbox
-return textbox.text_index + 1 >= ds_list_size(textbox.text_cut);

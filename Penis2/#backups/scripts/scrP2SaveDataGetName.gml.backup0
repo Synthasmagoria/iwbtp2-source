@@ -1,3 +1,0 @@
-// 2024-05-20 09:00:36
-/// scrP2SaveDataGetName
-return "data/p2data_" + string(global.savenum) + ".bin";

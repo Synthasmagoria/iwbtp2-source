@@ -1,7 +1,0 @@
-// 2023-11-21 18:14:40
-/// array(value,...)
-{
-    var r, i = argument_count;
-    while (--i >= 0) r[i] = argument[i];
-    return r;
-}

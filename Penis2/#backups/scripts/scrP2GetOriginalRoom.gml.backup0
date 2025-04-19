@@ -1,6 +1,0 @@
-// 2023-12-16 16:04:58
-/// scrP2GetOriginalRoom()
-var _r = global.__p2_original_rooms[?room_get_name(room)];
-if (_r == undefined)
-    return room;
-return _r;

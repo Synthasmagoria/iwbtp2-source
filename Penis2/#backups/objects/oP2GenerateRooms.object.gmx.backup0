@@ -1,7 +1,0 @@
-// 2023-12-16 20:30:37
-#event properties (no comments/etc. here are saved)
-parent_index = -1;
-uses_physics = false;
-
-#event create
-scrP2GenerateRooms();

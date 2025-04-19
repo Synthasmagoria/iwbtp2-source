@@ -1,8 +1,0 @@
-// 2024-05-26 23:03:53
-/// scrP2MusicChangeTrack(sound)->void
-#args sound
-global.currentMusicID = sound;
-var _current_song_position = audio_sound_get_track_position(global.currentMusic);
-audio_stop_sound(global.currentMusic);
-global.currentMusic = audio_play_sound(sound, 0, true);
-audio_sound_set_track_position(global.currentMusic, _current_song_position);

@@ -1,5 +1,0 @@
-// 2024-05-01 22:07:37
-/// scrP2ElevatorInterraction_Open
-if (live_call()) return live_result;
-global.gameStarted = false;
-instance_create(200, 100, objP2ElevatorPanel);

@@ -1,3 +1,0 @@
-// 2024-01-27 13:31:43
-/// buffer_write_string_aligned
-#args buffer, str, bytes

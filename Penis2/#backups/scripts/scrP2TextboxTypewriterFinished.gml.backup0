@@ -1,4 +1,0 @@
-// 2024-05-09 15:54:54
-/// scrP2TextboxTypewriterFinished
-#args textbox
-return !(textbox.text_char_index < string_length(textbox.text_cut[|textbox.text_index]));

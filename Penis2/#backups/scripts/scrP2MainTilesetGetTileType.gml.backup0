@@ -1,5 +1,0 @@
-// 2024-06-20 11:35:40
-/// scrP2MainTilesetGetTileType
-#args index
-gml_pragma("forceinline");
-return floor(index / floor(background_get_width(tPenis2Tileset) / global.__p2_tile_size));

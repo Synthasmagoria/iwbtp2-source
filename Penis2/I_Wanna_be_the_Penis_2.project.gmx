@@ -118,7 +118,6 @@
       <sound>sound\musMiku</sound>
     </sounds>
     <sounds name="NEW">
-      <sound>sound\mp3s_gonna_be_ogg_for_extaudio</sound>
       <sound>sound\sndDing</sound>
       <sound>sound\sndDingBroken</sound>
       <sound>sound\sndDingReversed</sound>

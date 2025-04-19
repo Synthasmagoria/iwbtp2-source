@@ -1,5 +1,0 @@
-// 2023-11-22 14:36:40
-#event properties (no comments/etc. here are saved)
-parent_index = -1;
-uses_physics = false;
-sprite_index = sprPlayerFall;

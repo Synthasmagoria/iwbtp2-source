@@ -1,5 +1,0 @@
-// 2024-01-30 19:27:22
-/// scrP2WarpHome
-instance_destroy(objPlayer);
-room_goto(rP2Intro01);
-var _player = instance_create(768, 416, objPlayer);

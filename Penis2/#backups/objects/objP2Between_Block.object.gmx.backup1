@@ -1,9 +1,0 @@
-// 2024-04-29 19:22:57
-#event properties (no comments/etc. here are saved)
-parent_index = -1;
-uses_physics = false;
-sprite_index = sprP2Between_Block;
-
-#event create
-image_speed = 0.33;
-depth = 250000;
