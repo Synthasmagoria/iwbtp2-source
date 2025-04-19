@@ -48,8 +48,7 @@ if (global.autosave) //save the game if currently set to autosave
 {
     scrSaveGame(true);
     global.autosave = false;
-}
-</string>
+}</string>
           </argument>
         </arguments>
       </action>
@@ -73,8 +72,7 @@ if (global.autosave) //save the game if currently set to autosave
             <kind>1</kind>
             <string>//when the player is destroyed, also destroy the bow
 with (objBow)
-    instance_destroy();
-</string>
+    instance_destroy();</string>
           </argument>
         </arguments>
       </action>
@@ -146,7 +144,6 @@ if (global.playerAnimationFix)
         image_speed = 1/2;
     }
 }
-
 </string>
           </argument>
         </arguments>
@@ -472,8 +469,7 @@ if (instance_exists(objSlope) &amp;&amp; hspeed != 0)
     //set xprevious/yprevious coordinates for future solid collisions
     xprevious = x;
     yprevious = y;
-}
-</string>
+}</string>
           </argument>
         </arguments>
       </action>
@@ -495,8 +491,7 @@ if (instance_exists(objSlope) &amp;&amp; hspeed != 0)
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>scrKillPlayer();
-</string>
+            <string>scrKillPlayer();</string>
           </argument>
         </arguments>
       </action>
@@ -545,8 +540,7 @@ else    //flipped
         onPlatform = true;
         djump = 1;
     }
-}
-</string>
+}</string>
           </argument>
         </arguments>
       </action>
@@ -598,8 +592,7 @@ if (!place_free(x,y+vspeed))
     vspeed = 0;
 }
 
-if (!place_free(x+hspeed,y+vspeed)) {hspeed = 0;}
-</string>
+if (!place_free(x+hspeed,y+vspeed)) {hspeed = 0;}</string>
           </argument>
         </arguments>
       </action>

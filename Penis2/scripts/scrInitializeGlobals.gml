@@ -61,6 +61,7 @@ global.timeMicro = 0;
 global.saveRoom = "";
 global.savePlayerX = 0;
 global.savePlayerY = 0;
+global.savePlayerFacing = 1;
 global.grav = 1;
 global.saveGrav = 1;
 

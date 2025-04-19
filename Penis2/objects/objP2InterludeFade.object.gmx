@@ -25,11 +25,8 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>TweenMore(
-    TweenFire(id, EaseLinear, 0, true, 2.0, 6.0, "image_alpha", 1.0, 0.0),
-    id, EaseLinear, 0, true, 14.0, 6.0, "image_alpha", 0.0, 1.0);
-depth = -2000000;
-</string>
+            <string>TweenFire(id, EaseLinear, 0, true, 2.0, 6.0, "image_alpha", 1.0, 0.0);
+depth = -2000000;</string>
           </argument>
         </arguments>
       </action>

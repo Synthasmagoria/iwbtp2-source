@@ -73,7 +73,6 @@ ds_list_add(oob_room_list,
 
 
 scrP2WorldCollectData(true);
-global.edgeDeath = false;
 
 
 enum P2_TILING_BITS {
@@ -331,8 +330,6 @@ global.__p2_room_tiles = -1;
 if (ds_exists(global.__p2_tilemap, ds_type_map))
     ds_grid_destroy(global.__p2_tilemap);
 global.__p2_tilemap = -1;
-
-global.edgeDeath = true;
 
 if (instance_exists(corruption_slug_visual_manager))
     instance_destroy(corruption_slug_visual_manager);

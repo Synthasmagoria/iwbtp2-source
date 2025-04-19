@@ -37,6 +37,7 @@ if (loadFile)
         global.savePlayerX = ds_map_find_value(saveMap,"savePlayerX");
         global.savePlayerY = ds_map_find_value(saveMap,"savePlayerY");
         global.saveGrav = ds_map_find_value(saveMap,"saveGrav");
+        global.savePlayerFacing = ds_map_find_value(saveMap,"savePlayerFacing");
         
         if (is_string(global.saveRoom))   //check if the saved room loaded properly
         {
@@ -129,6 +130,7 @@ global.p2Flag = global.saveP2Flag;
 
 global.gameClear = global.saveGameClear;
 
-instance_create(global.savePlayerX,global.savePlayerY,objPlayer);
+var _player = instance_create(global.savePlayerX,global.savePlayerY,objPlayer);
+_player.xScale = global.savePlayerFacing;
 
 room_goto(asset_get_index(global.saveRoom));
