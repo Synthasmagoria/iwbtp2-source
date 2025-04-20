@@ -88,7 +88,8 @@ TweenFire(id, EaseInOutQuad, TWEEN_MODE_PATROL, true, 0.0, 1.0, "current_room_al
 TweenFire(id, EaseLinear, TWEEN_MODE_LOOP, true, 0.0, 1.0, "objective_room_alpha", 0.75, 0.25);
 
 _x_tween = noone;
-_y_tween = noone;</string>
+_y_tween = noone;
+</string>
           </argument>
         </arguments>
       </action>
@@ -114,12 +115,13 @@ _y_tween = noone;</string>
 ds_list_destroy(objective_rooms);
 ds_list_destroy(world_border_triangles);
 ds_list_destroy(level_border_triangles);
-ds_list_destroy(rooms);
+ds_map_destroy(rooms);
 
 if (surface_exists(surf))
     surface_free(surf);
 
-instance_destroy(oP2MapNotification);</string>
+instance_destroy(oP2MapNotification);
+</string>
           </argument>
         </arguments>
       </action>
@@ -146,7 +148,8 @@ instance_destroy(oP2MapNotification);</string>
 with (objPlayer) {
     other.player_x = x;
     other.player_y = y;
-}</string>
+}
+</string>
           </argument>
         </arguments>
       </action>
@@ -183,7 +186,8 @@ for (var i = 0, n = ds_list_size(_objectives); i &lt; n; i++) {
             break;
         }
     }
-}</string>
+}
+</string>
           </argument>
         </arguments>
       </action>
@@ -207,7 +211,8 @@ for (var i = 0, n = ds_list_size(_objectives); i &lt; n; i++) {
             <kind>1</kind>
             <string>/// init
 scrP2ObjectivesUpdateRegisterCallback(id, 1);
-event_user(1);</string>
+event_user(1);
+</string>
           </argument>
         </arguments>
       </action>
@@ -234,7 +239,8 @@ event_user(1);</string>
 with (objPlayer) {
     other.player_x = x;
     other.player_y = y;
-}</string>
+}
+</string>
           </argument>
         </arguments>
       </action>
