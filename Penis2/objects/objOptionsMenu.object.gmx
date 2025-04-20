@@ -93,7 +93,7 @@ else if (scrButtonCheckPressed(global.menuBackButton))
     //save changes and go back
     scrSaveConfig();
     global.menuSelectPrev[1] = 0;
-    room_goto(rMenu);
+    room_goto(rTitle);
     exit;
 }
 else if (scrButtonCheckPressed(global.menuAcceptButton))
@@ -176,8 +176,8 @@ if (select == 1)
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_color(c_black);
-draw_set_font(fDefault30);
+            <string>draw_set_color(c_white);
+draw_set_font(fP2Silver32);
 draw_set_halign(fa_left);
 
 for(var i = 0; i &lt; optionsNum; i++)

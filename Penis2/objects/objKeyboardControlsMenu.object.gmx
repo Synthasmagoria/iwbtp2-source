@@ -219,8 +219,8 @@ strKey[10] = "";
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_color(c_black);
-draw_set_font(fDefault24);
+            <string>draw_set_color(c_white);
+draw_set_font(fP2Silver32);
 
 for(var i = 0; i &lt; 11; i += 1)
 {

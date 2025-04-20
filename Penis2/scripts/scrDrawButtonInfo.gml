@@ -1,3 +1,4 @@
+/// scrDrawButtonInfo(optionsText)
 ///scrDrawButtonInfo(optionsText)
 ///draws the button control info for menus
 ///argument0 - sets whether to draw the text for entering the options menu
@@ -23,7 +24,7 @@ else
 }
 
 //button info
-draw_set_font(fDefault12);
+draw_set_font(fP2Silver32);
 draw_set_halign(fa_left);
 draw_text(34,556,"["+backButton+"] Back");
 draw_set_halign(fa_right);

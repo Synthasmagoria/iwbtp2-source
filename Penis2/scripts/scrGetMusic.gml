@@ -5,6 +5,7 @@ var roomSong;
 switch (room)
 {
     case rTitle:
+    case rOptions:
     case rRealMenDontDie:
         if (file_exists(scrP2SaveDataGetName())) {
             roomSong = -1;

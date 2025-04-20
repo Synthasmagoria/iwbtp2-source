@@ -8,6 +8,29 @@
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
+    <event eventtype="0" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>save_exists = file_exists("Data\save"+string(global.savenum));
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="3" enumb="0">
       <action>
         <libid>1</libid>
@@ -26,7 +49,7 @@
           <argument>
             <kind>1</kind>
             <string>if (scrButtonCheckPressed(global.menuAcceptButton)) {
-    if (file_exists("Data\save"+string(global.savenum))) {
+    if (save_exists) {
         scrLoadGame(true);
     } else {
         global.gameStarted = true; //sets game in progress (enables saving, restarting, etc.)
@@ -35,6 +58,41 @@
         room_goto(global.startRoom);
     }
 }
+
+if (scrButtonCheckPressed(global.menuBackButton)) {
+    room_goto(rOptions);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="73">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>if (!save_exists) {
+    draw_set_font(fP2Silver32);
+    draw_set_valign(fa_bottom);
+    draw_set_halign(fa_left);
+    draw_set_color(c_white);
+    draw_text(4, room_height, "Press 'z' for options");
+    draw_set_valign(fa_top);
+}
+
 </string>
           </argument>
         </arguments>
